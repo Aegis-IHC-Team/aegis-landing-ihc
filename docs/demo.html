@@ -145,33 +145,85 @@
     </div>
 
     <div class="screen" id="recoverScreen">
-        <h1 class="welcome-title">Recupera tu contraseña</h1>
-        <p class="welcome-subtitle">
-            ¿Olvidaste tu contraseña? Ingresa tu correo y te enviaremos un código
-            de verificación de contraseña
-        </p>
+  <h1 class="welcome-title">Recupera tu contraseña</h1>
+  <p class="welcome-subtitle">
+    ¿Olvidaste tu contraseña? Ingresa tu correo y te enviaremos un código
+    de verificación de contraseña
+  </p>
 
-        <div class="input-group">
-            <input
-                    type="email"
-                    class="input-field"
-                    placeholder="usuario@usuario@gmail.com"
-            />
-        </div>
+  <div class="input-group">
+    <input
+      type="email"
+      class="input-field"
+      id="recoverEmail"
+      placeholder="usuario@usuario@gmail.com"
+    />
+  </div>
 
-        <button
-                class="primary-btn"
-                onclick="alert('Correo enviado'); showScreen('loginScreen')"
-        >
-            Enviar correo
-        </button>
+  <button
+    class="primary-btn"
+    id="recoverBtn"
+    onclick="handleRecover()"
+  >
+    Enviar correo
+  </button>
 
-        <p class="link-text">
-            <a href="#" onclick="showScreen('loginScreen')"
-            >Volver al inicio de sesión</a
-            >
-        </p>
+  <p class="link-text">
+    <a href="#" onclick="showScreen('loginScreen')">
+      Volver al inicio de sesión
+    </a>
+  </p>
+</div>
+
+<div class="screen" id="resetScreen">
+  <h1 class="welcome-title">Crea una nueva contraseña</h1>
+  <p class="welcome-subtitle">
+    Ingresa tu correo y tu nueva contraseña para acceder al panel de simulaciones.
+  </p>
+
+  <div class="input-group">
+    <input
+      type="email"
+      class="input-field"
+      id="resetEmail"
+      placeholder="usuario@gmail.com"
+    />
+  </div>
+
+  <div class="input-group">
+    <div class="input-with-icon">
+      <input
+        type="password"
+        class="input-field"
+        id="resetNewPassword"
+        placeholder="Nueva contraseña"
+      />
+      <span class="eye-icon" onclick="togglePassword('resetNewPassword')">👁️</span>
     </div>
+  </div>
+
+  <div class="input-group">
+    <div class="input-with-icon">
+      <input
+        type="password"
+        class="input-field"
+        id="resetConfirmPassword"
+        placeholder="Confirmar nueva contraseña"
+      />
+      <span class="eye-icon" onclick="togglePassword('resetConfirmPassword')">👁️</span>
+    </div>
+  </div>
+
+  <button class="primary-btn" onclick="handleResetFromEmail()">
+    Guardar y entrar
+  </button>
+
+  <p class="link-text">
+    <a href="#" onclick="showScreen('loginScreen')">
+      Volver al inicio de sesión
+    </a>
+  </p>
+</div>
 
     <div class="screen" id="dashboardScreen">
         <div class="dashboard-header">
@@ -677,6 +729,16 @@
         </div>
     </div>
 </div>
+
+<!-- SDK de EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    emailjs.init({
+      publicKey: "GcgtNU-FEDB6nLmTp", // SOLO la public key
+    });
+  });
+</script>
 
 <script src="assets/scripts/demo.js"></script>
 </body>
