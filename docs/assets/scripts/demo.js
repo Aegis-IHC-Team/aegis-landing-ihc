@@ -623,6 +623,48 @@ function changePassword() {
     );
 }
 
+function handleResetFromEmail() {
+  const email = document.getElementById("resetEmail").value.trim();
+  const newPwd = document.getElementById("resetNewPassword").value;
+  const confirmPwd = document.getElementById("resetConfirmPassword").value;
+
+  if (!email || !newPwd || !confirmPwd) {
+    alert("Completa todos los campos.");
+    return;
+  }
+
+  if (email !== currentUser.email) {
+    alert("Este correo no está registrado en esta demo.");
+    return;
+  }
+
+  if (newPwd.length < 6) {
+    alert("La nueva contraseña debe tener al menos 6 caracteres.");
+    return;
+  }
+
+  if (newPwd !== confirmPwd) {
+    alert("Las contraseñas no coinciden.");
+    return;
+  }
+
+  // Actualizamos la “BD” de la demo
+  currentUser.password = newPwd;
+
+  // Prellenar login
+  document.getElementById("loginEmail").value = email;
+  document.getElementById("loginPassword").value = newPwd;
+
+  alert("Listo, tu contraseña fue actualizada. Entrando al panel...");
+
+  // Limpia el hash para que no vuelva a entrar a resetScreen
+  if (window.location.hash === "#reset") {
+    history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  showScreen("dashboardScreen");
+}
+
 // DASHBOARD
 function updateDashboard() {
     document.getElementById("userName").textContent =
@@ -1043,6 +1085,8 @@ function submitAnswer() {
         correctAnswersCount++;
     }
 
+
+
     setTimeout(() => {
         alert(
             isCorrect
@@ -1121,7 +1165,52 @@ function finishSimulation() {
     showScreen("dashboardScreen");
 }
 
-// INITIALIZE
-setTimeout(() => {
+function handleRecover() {
+  const emailInput = document.getElementById("recoverEmail");
+  const emailValue = emailInput.value.trim();
+
+  if (!emailValue) {
+    alert("Ingresa un correo válido.");
+    return;
+  }
+
+  const button = document.getElementById("recoverBtn");
+  const originalText = button.textContent;
+
+  button.disabled = true;
+  button.textContent = "Enviando...";
+
+  emailjs
+    .send("service_aegis", "template_aegispassword", {
+      email: emailValue, // debe coincidir con {{email}} en tu template de EmailJS
+    })
+    .then(() => {
+      button.textContent = "Correo enviado ✓";
+      alert("Listo. Revisa tu bandeja de entrada o spam.");
+      emailInput.value = "";
+
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+        showScreen("loginScreen");
+      }, 2000);
+    })
+    .catch((error) => {
+      console.error("Error al enviar:", error);
+      alert("Hubo un problema al enviar el correo. Intenta otra vez.");
+      button.textContent = originalText;
+      button.disabled = false;
+    });
+}
+
+const startHash = window.location.hash;
+
+if (startHash === "#reset") {
+  // Si viene desde el correo, mostramos directamente la pantalla de reset
+  showScreen("resetScreen");
+} else {
+  // Flujo normal: splash -> login
+  setTimeout(() => {
     showScreen("loginScreen");
-}, 2000);
+  }, 2000);
+}
