@@ -15,7 +15,6 @@
     <nav class="navbar__links">
         <a href="#inicio">Inicio</a>
         <a href="#producto">Producto</a>
-        <a href="#demo">Demo</a>
         <a href="#equipo">Sobre el Equipo</a>
         <a href="#contacto">Contacto</a>
     </nav>
@@ -128,65 +127,19 @@
                 </div>
 
                 <div class="section__buttons">
-                    <a href="#demo" class="btn">Probar simulación</a>
+                    <button type="submit" class="btn" onclick="window.location.href='demo.html'">
+                        Iniciar demo gratuita
+                    </button>
                 </div>
+
             </div>
 
             <div class="section__panel-placeholder">
-                <!-- Aquí iría el mockup de la app -->
-                Panel de simulación Aegis
-            </div>
-        </div>
-    </section>
+                <img
+                        src="assets/images/simulaciones.jpg"
+                        alt="Panel de simulación Aegis"
+                />
 
-    <!-- DEMO / FORMULARIO -->
-    <section id="demo" class="section section--highlight">
-        <div class="section__content section__content--two-cols section__content--centered">
-            <div>
-                <h2 class="section__title section__title--light">
-                    Inicia tu demo gratuita
-                </h2>
-                <p class="section__subtitle">
-                    Descubre tu nivel de preparación ante crisis cibernéticas.
-                </p>
-
-                <form class="form">
-                    <div class="form__row">
-                        <label for="nombre">Nombre</label>
-                        <input id="nombre" type="text" placeholder="Nombre" />
-                    </div>
-
-                    <div class="form__row">
-                        <label for="apellido">Apellido</label>
-                        <input id="apellido" type="text" placeholder="Apellido" />
-                    </div>
-
-                    <div class="form__row">
-                        <label for="email">Correo electrónico</label>
-                        <input
-                                id="email"
-                                type="email"
-                                placeholder="user@gmail.com"
-                        />
-                    </div>
-
-                    <div class="form__row">
-                        <label for="telefono">Teléfono</label>
-                        <input
-                                id="telefono"
-                                type="tel"
-                                placeholder="+51 923 423 942"
-                        />
-                    </div>
-
-                    <button type="submit" class="btn btn--full" onclick="window.location.href='demo.html'">
-                        Iniciar demo gratuita
-                    </button>
-                </form>
-            </div>
-
-            <div class="section__panel-placeholder section__panel-placeholder--small">
-                Vista previa de la simulación
             </div>
         </div>
     </section>
@@ -331,17 +284,18 @@
             <h4>Secciones</h4>
             <a href="#inicio">Inicio</a>
             <a href="#producto">Nosotros</a>
+            <a href="#equipo">Sobre el Equipo</a>
         </div>
 
         <div class="footer__column">
             <h4>Contacto</h4>
-            <p>user@gmail.com</p>
-            <p>+51 923 423 942</p>
+            <p>aegis.security@gmail.com</p>
+            <p>+51 987 654 321</p>
         </div>
 
         <div class="footer__column">
             <h4>Síguenos</h4>
-            <p>@aegis.security (placeholder)</p>
+            <p>@aegis.security</p>
         </div>
     </div>
 

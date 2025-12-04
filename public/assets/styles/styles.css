@@ -1,4 +1,3 @@
-/* ========== RESET BÁSICO ========== */
 *,
 *::before,
 *::after {
@@ -13,11 +12,11 @@ body {
     background-color: #020617;
 }
 
-/* ========== NAVBAR ========== */
-
 .navbar {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 50;
     display: flex;
     align-items: center;
@@ -26,6 +25,10 @@ body {
     background: rgba(2, 6, 23, 0.96);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+main {
+    padding-top: 72px;   /* ajusta si tu navbar es más alta o más baja */
 }
 
 .navbar__logo {
@@ -62,7 +65,6 @@ body {
     text-decoration: none;
 }
 
-/* Botón principal de la navbar con glow */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -94,8 +96,6 @@ body {
 .btn--full {
     width: 100%;
 }
-
-/* ========== HERO ========== */
 
 .hero {
     min-height: 90vh;
@@ -150,7 +150,6 @@ body {
     flex-wrap: wrap;
 }
 
-/* chips */
 .tag {
     display: inline-flex;
     align-items: center;
@@ -193,7 +192,6 @@ body {
     color: #bfdbfe;
 }
 
-/* Pasos numerados */
 .steps {
     list-style: none;
     padding: 0;
@@ -224,8 +222,6 @@ body {
 .steps--vertical li {
     align-items: flex-start;
 }
-
-/* ========== SECCIONES GENERALES ========== */
 
 .section {
     padding: 4rem 5%;
@@ -261,13 +257,11 @@ body {
     max-width: 480px;
 }
 
-/* títulos centrados en secciones claras (como en el mockup) */
 .section--light .section__title {
     text-align: center;
     margin-bottom: 2.2rem;
 }
 
-/* layout 2 columnas */
 .section__content--two-cols {
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
@@ -277,8 +271,6 @@ body {
 .section__content--centered {
     align-items: center;
 }
-
-/* ========== GRID Y CARDS ========== */
 
 .grid-3 {
     display: grid;
@@ -297,7 +289,6 @@ body {
     max-width: 340px;
 }
 
-/* tarjetas blancas como en el mockup */
 .section--light .card {
     background: #ffffff;
     color: #111827;
@@ -318,7 +309,6 @@ body {
     color: #4b5563;
 }
 
-/* testimonios */
 .card--testimonial .card__quote {
     font-style: italic;
     margin-bottom: 0.9rem;
@@ -336,33 +326,40 @@ body {
     color: #111827;
 }
 
-/* ========== PANEL PLACEHOLDER (tarjeta azul grande) ========== */
-
 .section__panel-placeholder {
-    border-radius: 1.6rem;
-    min-height: 260px;
-    background: radial-gradient(circle at top left, #102441 0, #102441 35%, #102441 100%);
+    flex: 1;
     display: flex;
-    align-items: center;
     justify-content: center;
-    color: #e5e7eb;
-    font-size: 0.95rem;
-    text-align: center;
-    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9);
+    align-items: center;
+    padding-left: 24px;
 }
 
-.section__panel-placeholder--small {
-    min-height: 220px;
+.section__panel-placeholder img {
+    width: 100%;
+    max-width: 520px;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
 }
 
-/* métricas debajo de los pasos */
+@media (max-width: 768px) {
+    .section__panel-placeholder {
+        padding-left: 0;
+        margin-top: 24px;
+    }
+
+    .section__panel-placeholder img {
+        max-width: 100%;
+        max-height: 260px;
+    }
+}
+
 .section__metrics p {
     font-size: 0.9rem;
     margin: 0.25rem 0;
     color: #cbd5f5;
 }
-
-/* ========== FORM DEMO ========== */
 
 .form {
     max-width: 420px;
@@ -391,8 +388,6 @@ body {
 .form input::placeholder {
     color: #94a3b8;
 }
-
-/* ========== FOOTER ========== */
 
 .footer {
     padding: 3rem 5% 1.6rem;
@@ -446,16 +441,13 @@ body {
     font-size: 0.78rem;
 }
 
-/* ========== SOBRE EL EQUIPO ========== */
-
 .section--team {
     padding-top: 3rem;
     padding-bottom: 3rem;
 }
 
-/* banda verde clara detrás del título */
 .team-banner {
-    background: #e5f4ec;           /* verde muy clarito */
+    background: #e5f4ec;
     padding: 0.9rem 0;
     border-radius: 0.5rem;
     margin-bottom: 2.2rem;
@@ -465,31 +457,28 @@ body {
     text-align: center;
     margin: 0;
     font-size: 1.5rem;
-    color: #16a34a;                /* verde principal */
+    color: #16a34a;
     font-weight: 700;
 }
 
 .team-title span {
-    color: #111827;                /* "Sobre el" en oscuro */
+    color: #111827;
     font-weight: 600;
 }
 
-/* tarjetas en fila, como en el ejemplo */
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(200px, 1fr)); /* 3 por fila */
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
     gap: 1.4rem;
     justify-items: center;
 }
 
-
-/* card del integrante */
 .team-card {
     background: #ffffff;
     border-radius: 1.1rem;
     padding: 1.4rem 1.2rem 1.2rem;
     width: 100%;
-    max-width: 220px; /* tamaño similar al modelo */
+    max-width: 220px;
     box-shadow: 0 16px 40px rgba(148, 163, 184, 0.45);
     text-align: center;
     display: flex;
@@ -497,13 +486,11 @@ body {
     align-items: center;
 }
 
-
-/* contenedor para el borde redondo azul/verde */
 .team-card__avatar {
     width: 88px;
     height: 88px;
     border-radius: 999px;
-    border: 4px solid #22c55e;     /* borde verde como el modelo */
+    border: 4px solid #22c55e;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -517,7 +504,6 @@ body {
     object-fit: cover;
 }
 
-/* nombre y código */
 .team-card__name {
     margin: 0 0 0.15rem;
     font-size: 0.9rem;
@@ -531,7 +517,6 @@ body {
     color: #6b7280;
 }
 
-/* texto "Integrante" en verde */
 .team-card__role {
     margin: 0;
     font-size: 0.78rem;
@@ -539,7 +524,6 @@ body {
     color: #16a34a;
 }
 
-/* responsive */
 @media (max-width: 720px) {
     .team-card {
         width: 46%;
@@ -566,10 +550,6 @@ body {
     }
 }
 
-
-
-/* ========== RESPONSIVE ========== */
-
 @media (max-width: 960px) {
     .hero {
         grid-template-columns: minmax(0, 1fr);
@@ -591,7 +571,7 @@ body {
 
 @media (max-width: 720px) {
     .navbar__links {
-        display: none; /* versión mobile simple */
+        display: none;
     }
 
     .navbar__actions {
@@ -615,9 +595,6 @@ body {
     }
 }
 
-
-/* ========== NAVBAR LINK ACTIVO ========== */
-
 .navbar__links a.navbar__link--active {
     color: #38bdf8;
     position: relative;
@@ -636,8 +613,6 @@ body {
     background: linear-gradient(90deg, #22d3ee, #6366f1);
 }
 
-/* ========== HERO CARD INTERACTIVA ========== */
-
 .hero__card {
     transition: transform 0.18s ease-out, box-shadow 0.2s ease-out;
 }
@@ -645,8 +620,6 @@ body {
 .hero__card:hover {
     box-shadow: 0 38px 90px rgba(15, 23, 42, 1);
 }
-
-/* ========== ANIMACIONES DE APARICIÓN ========== */
 
 .hero,
 .section,
@@ -664,8 +637,6 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
-
-/* ========== MICRO-ANIMACIONES DE HOVER EN CARDS ========== */
 
 .card,
 .team-card {
@@ -687,8 +658,6 @@ body {
     box-shadow: 0 22px 60px rgba(148, 163, 184, 0.55);
 }
 
-/* ========== TAGS / CHIPS CON PULSO SUAVE ========== */
-
 .tag {
     position: relative;
     overflow: hidden;
@@ -707,8 +676,6 @@ body {
     opacity: 1;
 }
 
-/* ========== BOTÓN ESTADOS (EN ENVÍO / OK) ========== */
-
 .btn--sending {
     opacity: 0.85;
     cursor: wait;
@@ -718,8 +685,6 @@ body {
     background: linear-gradient(90deg, #22c55e, #16a34a);
     box-shadow: 0 18px 35px rgba(34, 197, 94, 0.65);
 }
-
-/* ========== BOTONES EN SECCIÓN "CÓMO FUNCIONA" ========== */
 
 .section__buttons {
     margin-top: 1.6rem;

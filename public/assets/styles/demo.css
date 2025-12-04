@@ -11,8 +11,8 @@ body {
 }
 
 .container {
-    max-width: 420px;
-    margin: 0 auto;
+    /*max-width: 420px;*/
+    margin: 0;
     background: white;
     min-height: 100vh;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
