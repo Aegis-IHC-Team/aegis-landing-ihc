@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aegis - Ciberseguridad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/styles/demo.css" />
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <button
+                class="back-btn"
+                onclick="goBack()"
+                style="display: none"
+                id="backBtn"
+        >
+            ←
+        </button>
+        <div class="time" id="currentTime">9:41</div>
+        <div style="width: 24px"></div>
+    </div>
+
+    <div class="screen active" id="splashScreen">
+        <div class="logo-container">
+            <div class="logo">🛡️</div>
+            <div class="app-name">Aegis</div>
+        </div>
+    </div>
+
+    <div class="screen" id="loginScreen">
+        <h1 class="welcome-title">Bienvenido/a</h1>
+        <p class="welcome-subtitle">
+            Hola están para acceder a todas las nuevas métricas de prácticas y
+            simulación de casos de ciberseguridad
+        </p>
+
+        <div class="social-buttons">
+            <button class="social-btn">🔍 Google</button>
+            <button class="social-btn">📘 Facebook</button>
+        </div>
+
+        <div class="input-group">
+            <input
+                    type="email"
+                    class="input-field"
+                    placeholder="usuario@gmail.com"
+                    id="loginEmail"
+                    value="miyaball@gmail.com"
+            />
+        </div>
+
+        <div class="input-group">
+            <div class="input-with-icon">
+                <input
+                        type="password"
+                        class="input-field"
+                        placeholder="••••••••"
+                        id="loginPassword"
+                        value="miyaball"
+                />
+                <span class="eye-icon" onclick="togglePassword('loginPassword')"
+                >👁️</span
+                >
+            </div>
+        </div>
+
+        <button class="primary-btn" onclick="handleLogin()">
+            Iniciar Sesión
+        </button>
+
+        <p class="link-text">
+            <a href="#" onclick="showScreen('recoverScreen')"
+            >¿Olvidaste tu contraseña?</a
+            ><br />
+            ¿No tienes una cuenta?
+            <a href="#" onclick="showScreen('signupScreen')">Regístrate</a>
+        </p>
+    </div>
+
+    <div class="screen" id="signupScreen">
+        <h1 class="welcome-title">Crea una nueva cuenta</h1>
+        <p class="welcome-subtitle">
+            ¿Listo para comenzar a aprender a cuidarte en línea? Regístrate y
+            accede a demos sin uso para aprender sobre los riesgos en internet
+        </p>
+
+        <div class="social-buttons">
+            <button class="social-btn">🔍 Google</button>
+            <button class="social-btn">📘 Facebook</button>
+        </div>
+
+        <div class="input-group">
+            <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Nombre completo"
+                    id="signupName"
+            />
+        </div>
+
+        <div class="input-group">
+            <input
+                    type="email"
+                    class="input-field"
+                    placeholder="Email"
+                    id="signupEmail"
+            />
+        </div>
+
+        <div class="input-group">
+            <div class="input-with-icon">
+                <input
+                        type="password"
+                        class="input-field"
+                        placeholder="Contraseña"
+                        id="signupPassword"
+                />
+                <span class="eye-icon" onclick="togglePassword('signupPassword')"
+                >👁️</span
+                >
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="terms" />
+            <label for="terms"
+            >Acepto los términos de servicio y política de privacidad</label
+            >
+        </div>
+
+        <button class="primary-btn" onclick="handleSignup()">Regístrate</button>
+
+        <p class="link-text">
+            ¿Ya tienes una cuenta?
+            <a href="#" onclick="showScreen('loginScreen')">Inicia sesión</a>
+        </p>
+    </div>
+
+    <div class="screen" id="recoverScreen">
+  <h1 class="welcome-title">Recupera tu contraseña</h1>
+  <p class="welcome-subtitle">
+    ¿Olvidaste tu contraseña? Ingresa tu correo y te enviaremos un código
+    de verificación de contraseña
+  </p>
+
+  <div class="input-group">
+    <input
+      type="email"
+      class="input-field"
+      id="recoverEmail"
+      placeholder="usuario@usuario@gmail.com"
+    />
+  </div>
+
+  <button
+    class="primary-btn"
+    id="recoverBtn"
+    onclick="handleRecover()"
+  >
+    Enviar correo
+  </button>
+
+  <p class="link-text">
+    <a href="#" onclick="showScreen('loginScreen')">
+      Volver al inicio de sesión
+    </a>
+  </p>
+</div>
+
+<div class="screen" id="resetScreen">
+  <h1 class="welcome-title">Crea una nueva contraseña</h1>
+  <p class="welcome-subtitle">
+    Ingresa tu correo y tu nueva contraseña para acceder al panel de simulaciones.
+  </p>
+
+  <div class="input-group">
+    <input
+      type="email"
+      class="input-field"
+      id="resetEmail"
+      placeholder="usuario@gmail.com"
+    />
+  </div>
+
+  <div class="input-group">
+    <div class="input-with-icon">
+      <input
+        type="password"
+        class="input-field"
+        id="resetNewPassword"
+        placeholder="Nueva contraseña"
+      />
+      <span class="eye-icon" onclick="togglePassword('resetNewPassword')">👁️</span>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <div class="input-with-icon">
+      <input
+        type="password"
+        class="input-field"
+        id="resetConfirmPassword"
+        placeholder="Confirmar nueva contraseña"
+      />
+      <span class="eye-icon" onclick="togglePassword('resetConfirmPassword')">👁️</span>
+    </div>
+  </div>
+
+  <button class="primary-btn" onclick="handleResetFromEmail()">
+    Guardar y entrar
+  </button>
+
+  <p class="link-text">
+    <a href="#" onclick="showScreen('loginScreen')">
+      Volver al inicio de sesión
+    </a>
+  </p>
+</div>
+
+    <div class="screen" id="dashboardScreen">
+        <div class="dashboard-header">
+            <div class="user-greeting">
+                ¡Hola, <span id="userName">Usuario</span>!
+            </div>
+            <div class="user-subtitle">Bienvenido de vuelta</div>
+        </div>
+
+        <div class="quick-stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalSims">5</div>
+                <div class="stat-label">Simulaciones</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="completedSims">3</div>
+                <div class="stat-label">Completadas</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="avgScore">78%</div>
+                <div class="stat-label">Promedio</div>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="showScreen('simulationsScreen')">
+                <div class="menu-icon">📊</div>
+                <div class="menu-title">Simulaciones</div>
+            </div>
+            <div class="menu-card" onclick="showScreen('createSimScreen')">
+                <div class="menu-icon">➕</div>
+                <div class="menu-title">Nueva Simulación</div>
+            </div>
+            <div class="menu-card" onclick="showScreen('profileScreen')">
+                <div class="menu-icon">👤</div>
+                <div class="menu-title">Mi Perfil</div>
+            </div>
+            <div class="menu-card" onclick="showScreen('settingsScreen')">
+                <div class="menu-icon">⚙️</div>
+                <div class="menu-title">Configuración</div>
+            </div>
+        </div>
+
+        <div class="section-title">Simulaciones recientes</div>
+        <div id="recentSimsList"></div>
+    </div>
+
+    <div class="screen" id="profileScreen">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <div class="profile-name" id="profileName">Usuario N</div>
+            <div class="profile-email" id="profileEmail">usuario@gmail.com</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Nombre completo</div>
+            <div class="info-value" id="fullName">Usuario Nombre</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Correo electrónico</div>
+            <div class="info-value" id="email">miyaball@gmail.com</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Teléfono</div>
+            <div class="info-value" id="phone">+51 999 777 555</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">País</div>
+            <div class="info-value" id="country">🇵🇪 Perú</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Miembro desde</div>
+            <div class="info-value">Diciembre 2025</div>
+        </div>
+
+        <button class="primary-btn" onclick="showScreen('settingsScreen')">
+            Editar Perfil
+        </button>
+    </div>
+
+    <div class="screen" id="settingsScreen">
+        <div class="settings-section">
+            <div class="section-title">Información Personal</div>
+
+            <div class="input-group">
+                <label>Nombre completo</label>
+                <input
+                        type="text"
+                        class="input-field"
+                        id="editName"
+                        value="Usuario Nombre"
+                />
+            </div>
+
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <input
+                        type="email"
+                        class="input-field"
+                        id="editEmail"
+                        value="miyaball@gmail.com"
+                />
+            </div>
+
+            <div class="input-group">
+                <label>Teléfono</label>
+                <input
+                        type="tel"
+                        class="input-field"
+                        id="editPhone"
+                        value="+51 999 777 555"
+                />
+            </div>
+
+            <div class="input-group">
+                <label>País</label>
+                <select class="input-field" id="editCountry">
+                    <option value="pe">🇵🇪 Perú</option>
+                    <option value="ar">🇦🇷 Argentina</option>
+                    <option value="br">🇧🇷 Brasil</option>
+                    <option value="mx">🇲🇽 México</option>
+                </select>
+            </div>
+
+            <button class="primary-btn" onclick="saveProfile()">
+                Guardar Cambios
+            </button>
+        </div>
+
+        <div class="settings-section">
+            <div class="section-title">Cambiar Contraseña</div>
+
+            <div class="input-group">
+                <label>Contraseña actual</label>
+                <div class="input-with-icon">
+                    <input type="password" class="input-field" id="currentPassword" />
+                    <span class="eye-icon" onclick="togglePassword('currentPassword')"
+                    >👁️</span
+                    >
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Nueva contraseña</label>
+                <div class="input-with-icon">
+                    <input type="password" class="input-field" id="newPassword" />
+                    <span class="eye-icon" onclick="togglePassword('newPassword')"
+                    >👁️</span
+                    >
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar nueva contraseña</label>
+                <div class="input-with-icon">
+                    <input type="password" class="input-field" id="confirmPassword" />
+                    <span class="eye-icon" onclick="togglePassword('confirmPassword')"
+                    >👁️</span
+                    >
+                </div>
+            </div>
+
+            <button class="secondary-btn" onclick="changePassword()">
+                Cambiar Contraseña
+            </button>
+        </div>
+
+        <button class="danger-btn" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="screen" id="simulationsScreen">
+        <h1 class="welcome-title">Mis Simulaciones</h1>
+
+        <div class="tabs">
+            <button class="tab active" onclick="filterSimulations('all')">
+                Todas
+            </button>
+            <button class="tab" onclick="filterSimulations('pending')">
+                Pendientes
+            </button>
+            <button class="tab" onclick="filterSimulations('completed')">
+                Completadas
+            </button>
+        </div>
+
+        <div id="simulationsList"></div>
+
+        <button
+                class="primary-btn"
+                onclick="showScreen('createSimScreen')"
+                style="margin-top: 20px"
+        >
+            Crear Nueva Simulación
+        </button>
+    </div>
+
+    <div class="screen" id="createSimScreen">
+        <h1 class="welcome-title">Crear una simulación</h1>
+        <p class="welcome-subtitle">Selecciona una plantilla</p>
+
+        <div class="sim-grid">
+            <div class="sim-card email" onclick="selectSimType('email')">
+                <div class="sim-card-title">📧<br />Email<br />Malicioso</div>
+            </div>
+            <div class="sim-card link" onclick="selectSimType('link')">
+                <div class="sim-card-title">🔗<br />Link<br />Malicioso</div>
+            </div>
+            <div class="sim-card sms" onclick="selectSimType('sms')">
+                <div class="sim-card-title">💬<br />SMS<br />Phishing</div>
+            </div>
+            <div class="sim-card web" onclick="selectSimType('web')">
+                <div class="sim-card-title">🌐<br />Sitio Web<br />Fraudulento</div>
+            </div>
+            <div class="sim-card sweep" onclick="selectSimType('sweep')">
+                <div class="sim-card-title">⚡<br />Better<br />Sweep</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen" id="personalizeScreen">
+        <h1 class="welcome-title">Personalizar simulación</h1>
+
+        <div class="sim-preview">
+            <div class="sim-preview-title">Plantilla seleccionada</div>
+            <div class="sim-preview-content" id="selectedSimType">
+                Email Malicioso
+            </div>
+            <span class="difficulty-badge" id="simDifficulty"
+            >Dificultad: ⭐⭐⭐⭐⭐</span
+            >
+        </div>
+
+        <div class="input-group">
+            <label>Título de la simulación</label>
+            <input
+                    type="text"
+                    class="input-field"
+                    id="simTitle"
+                    placeholder="Ej: Phishing bancario nivel avanzado"
+            />
+        </div>
+
+        <div class="input-group">
+            <label>Descripción</label>
+            <textarea
+                    class="description-box"
+                    id="simDescription"
+                    placeholder="Describe los objetivos y características de esta simulación..."
+            ></textarea>
+        </div>
+
+        <button class="primary-btn" onclick="goToAssignParticipants()">
+            Continuar
+        </button>
+    </div>
+
+    <div class="screen" id="assignScreen">
+        <h1 class="welcome-title">Asignar participantes</h1>
+        <p class="welcome-subtitle">Elige el grupo o persona</p>
+
+        <div class="input-group">
+            <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Ingrese correo/Grupo a buscar"
+                    id="participantInput"
+            />
+            <button
+                    class="secondary-btn"
+                    onclick="addParticipant()"
+                    style="margin-top: 10px"
+            >
+                Agregar
+            </button>
+        </div>
+
+        <div id="participantsList" style="margin: 20px 0"></div>
+
+        <p class="info-text">O seleccione un grupo predefinido:</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0">
+            <button
+                    class="secondary-btn"
+                    onclick="addGroup('Equipo de IT')"
+                    style="flex: 1; min-width: 150px"
+            >
+                👥 Equipo de IT
+            </button>
+            <button
+                    class="secondary-btn"
+                    onclick="addGroup('Área Comercial')"
+                    style="flex: 1; min-width: 150px"
+            >
+                👥 Área Comercial
+            </button>
+        </div>
+
+        <button class="primary-btn" onclick="goToSchedule()">Siguiente</button>
+    </div>
+
+    <div class="screen" id="scheduleScreen">
+        <h1 class="welcome-title">Programar Simulación</h1>
+
+        <div class="date-time-inputs">
+            <div class="input-group">
+                <label>Fecha Inicio</label>
+                <input type="date" class="input-field" id="startDate" />
+            </div>
+
+            <div class="input-group">
+                <label>Hora de inicio</label>
+                <input
+                        type="time"
+                        class="input-field"
+                        id="startTime"
+                        value="12:00"
+                />
+            </div>
+
+            <div class="input-group">
+                <label>Fecha de finalización</label>
+                <input type="date" class="input-field" id="endDate" />
+            </div>
+
+            <div class="input-group">
+                <label>Hora de finalización</label>
+                <input type="time" class="input-field" id="endTime" value="12:00" />
+            </div>
+        </div>
+
+        <div class="toggle-switch">
+            <div class="switch" id="autoSendSwitch" onclick="toggleSwitch(this)">
+                <div class="switch-handle"></div>
+            </div>
+            <span>Enviar automáticamente por correo</span>
+        </div>
+
+        <button class="primary-btn" onclick="goToPreview()">Siguiente</button>
+    </div>
+
+    <div class="screen" id="previewScreen">
+        <h1 class="welcome-title">Previsualización</h1>
+        <p class="welcome-subtitle">Revisa los detalles antes de crear</p>
+
+        <div class="preview-card">
+            <div class="preview-header">
+                <div>
+                    <div class="preview-label">Tipo</div>
+                    <div class="preview-value" id="previewType">Email Malicioso</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-card">
+            <div class="preview-label">Título</div>
+            <div class="preview-value" id="previewTitle">-</div>
+        </div>
+
+        <div class="preview-card">
+            <div class="preview-label">Descripción</div>
+            <div
+                    class="preview-value"
+                    style="font-size: 14px; font-weight: 400"
+                    id="previewDescription"
+            >
+                -
+            </div>
+        </div>
+
+        <div class="preview-card">
+            <div class="preview-header">
+                <div>
+                    <div class="preview-label">Participantes</div>
+                    <div class="preview-value" id="previewParticipants">
+                        0 usuarios
+                    </div>
+                </div>
+                <div style="text-align: right">
+                    <div class="preview-label">Dificultad</div>
+                    <div
+                            class="preview-value"
+                            style="font-size: 14px"
+                            id="previewDifficulty"
+                    >
+                        ⭐⭐⭐
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-card">
+            <div class="preview-header">
+                <div>
+                    <div class="preview-label">Fecha de inicio</div>
+                    <div class="preview-date" id="previewStartDate">-</div>
+                </div>
+                <div style="text-align: right">
+                    <div class="preview-label">Fecha de fin</div>
+                    <div class="preview-date" id="previewEndDate">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 30px">
+            <button class="secondary-btn" onclick="goBack()">Editar</button>
+            <button
+                    class="primary-btn"
+                    style="flex: 1"
+                    onclick="createSimulation()"
+            >
+                Crear Simulación
+            </button>
+        </div>
+    </div>
+
+    <div class="screen" id="simExecutionScreen">
+        <div class="sim-screen" id="simScreenBg">
+            <div class="sim-header">
+                <h2 id="simTypeTitle">Simulación</h2>
+                <button class="sim-close" onclick="exitSimulation()">✕</button>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="simProgressFill"></div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 30px; opacity: 0.9">
+                <div style="font-size: 14px">
+                    Pregunta <span id="currentQuestionNum">1</span> de
+                    <span id="totalQuestions">5</span>
+                </div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <div class="question-title" id="questionTitle">Pregunta</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div id="answersContainer"></div>
+
+            <button class="primary-btn" onclick="submitAnswer()" id="submitBtn">
+                Responder
+            </button>
+        </div>
+    </div>
+
+    <div class="screen" id="resultsScreen">
+        <div class="results-screen">
+            <button
+                    class="sim-close"
+                    onclick="finishSimulation()"
+                    style="float: right"
+            >
+                ✕
+            </button>
+            <div class="result-title">¡Simulación Completada! ✓</div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="finalScore">0%</div>
+                    <div class="stat-label">Puntuación</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="correctAnswers">0/0</div>
+                    <div class="stat-label">Correctas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="timeSpent">0:00</div>
+                    <div class="stat-label">Tiempo Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pointsEarned">0</div>
+                    <div class="stat-label">Puntos</div>
+                </div>
+            </div>
+
+            <div
+                    id="feedbackSection"
+                    style="
+              background: rgba(255, 255, 255, 0.15);
+              padding: 20px;
+              border-radius: 12px;
+              margin: 20px 0;
+            "
+            ></div>
+
+            <button class="primary-btn" onclick="finishSimulation()">
+                Volver al inicio
+            </button>
+            <button
+                    class="secondary-btn"
+                    style="
+              margin-top: 15px;
+              color: #fff;
+              border-color: rgba(255, 255, 255, 0.5);
+            "
+            >
+                Compartir Resultados
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SDK de EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    emailjs.init({
+      publicKey: "GcgtNU-FEDB6nLmTp", // SOLO la public key
+    });
+  });
+</script>
+
+<script src="assets/scripts/demo.js"></script>
+</body>
+</html>
