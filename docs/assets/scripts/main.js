@@ -105,13 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const button = form.querySelector("button[type='submit']");
                 if (!button) return;
 
-                const originalText = button.textContent;
+                const originalHTML = button.innerHTML;
                 button.disabled = true;
-                button.textContent = "Enviando...";
+                button.innerHTML = "Enviando...";
                 button.classList.add("btn--sending");
 
                 setTimeout(() => {
-                    button.textContent = "Demo registrada ✓";
+                    button.innerHTML = '<i class="fa-solid fa-circle-check"></i> Demo registrada';
                     button.classList.remove("btn--sending");
                     button.classList.add("btn--success");
 
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     form.reset();
 
                     setTimeout(() => {
-                        button.textContent = originalText;
+                        button.innerHTML = originalHTML;
                         button.disabled = false;
                         button.classList.remove("btn--success");
                     }, 2000);

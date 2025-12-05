@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Crear Simulación</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="time">Crear Simulación</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <!-- Pantalla: Seleccionar tipo -->
+    <div class="screen active" id="createSimScreen">
+      <h1 class="welcome-title">Crear una simulación</h1>
+      <p class="welcome-subtitle">Selecciona una plantilla</p>
+
+      <div class="sim-grid">
+        <div class="sim-card email" onclick="selectSimType('email')"><div class="sim-card-title"><i class="fa-solid fa-envelope"></i><br />Email<br />Malicioso</div></div>
+        <div class="sim-card link" onclick="selectSimType('link')"><div class="sim-card-title"><i class="fa-solid fa-link"></i><br />Link<br />Malicioso</div></div>
+        <div class="sim-card sms" onclick="selectSimType('sms')"><div class="sim-card-title"><i class="fa-solid fa-comments"></i><br />SMS<br />Phishing</div></div>
+        <div class="sim-card web" onclick="selectSimType('web')"><div class="sim-card-title"><i class="fa-solid fa-globe"></i><br />Sitio Web<br />Fraudulento</div></div>
+        <div class="sim-card sweep" onclick="selectSimType('sweep')"><div class="sim-card-title"><i class="fa-solid fa-bolt"></i><br />Sweep</div></div>
+      </div>
+    </div>
+
+    <!-- Pantalla: Personalizar simulación -->
+    <div class="screen" id="personalizeScreen">
+      <h1 class="welcome-title">Personaliza tu simulación</h1>
+      <p class="welcome-subtitle"><span id="selectedSimType">Tipo de simulación</span></p>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Título de la Simulación</label>
+        <input type="text" class="input-field" placeholder="Ej: Simulación de Phishing - Enero 2025" id="simTitle" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Descripción</label>
+        <textarea class="input-field" placeholder="Describe el objetivo de la simulación" id="simDescription" style="resize: vertical; min-height: 80px;"></textarea>
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Dificultad: <span id="simDifficulty">3/5</span></label>
+      </div>
+
+      <button class="primary-btn" onclick="goToAssignParticipants()">Continuar</button>
+      <button class="secondary-btn" style="margin-top: 10px;" onclick="history.back()">Cancelar</button>
+    </div>
+
+    <!-- Pantalla: Asignar participantes -->
+    <div class="screen" id="assignScreen">
+      <h1 class="welcome-title">Asigna Participantes</h1>
+      <p class="welcome-subtitle">Selecciona quiénes van a participar en esta simulación</p>
+
+      <div class="input-group">
+        <input type="email" class="input-field" placeholder="Correo o nombre del participante" id="participantInput" />
+        <button class="primary-btn" style="margin-top: 10px;" onclick="addParticipant()">Agregar Participante</button>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 10px; display: block;">Participantes agregados:</label>
+        <div id="participantsList"></div>
+      </div>
+
+      <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="secondary-btn" onclick="goBack()">Atrás</button>
+        <button class="primary-btn" onclick="goToSchedule()">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- Pantalla: Programar -->
+    <div class="screen" id="scheduleScreen">
+      <h1 class="welcome-title">Programa tu simulación</h1>
+      <p class="welcome-subtitle">Establece fechas y horarios</p>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Fecha de Inicio</label>
+        <input type="date" class="input-field" id="startDate" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Hora de Inicio</label>
+        <input type="time" class="input-field" id="startTime" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Fecha de Fin</label>
+        <input type="date" class="input-field" id="endDate" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Hora de Fin</label>
+        <input type="time" class="input-field" id="endTime" />
+      </div>
+
+      <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="secondary-btn" onclick="goBack()">Atrás</button>
+        <button class="primary-btn" onclick="goToPreview()">Previsualizar</button>
+      </div>
+    </div>
+
+    <!-- Pantalla: Vista Previa -->
+    <div class="screen" id="previewScreen">
+      <h1 class="welcome-title">Revisa tu simulación</h1>
+      <p class="welcome-subtitle">Verifica los detalles antes de crear</p>
+
+      <div class="preview-card">
+        <div class="preview-label">Tipo</div>
+        <div class="preview-value" id="previewType">Email Malicioso</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Título</div>
+        <div class="preview-value" id="previewTitle">Simulación</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Descripción</div>
+        <div class="preview-value" id="previewDescription">Descripción</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Participantes</div>
+        <div class="preview-value" id="previewParticipants">0 usuarios</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Dificultad</div>
+        <div class="preview-value stars" id="previewDifficulty">★★★</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Inicio</div>
+        <div class="preview-date" id="previewStartDate">01/01/2025</div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-label">Fin</div>
+        <div class="preview-date" id="previewEndDate">01/01/2025</div>
+      </div>
+
+      <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="secondary-btn" onclick="goBack()">Atrás</button>
+        <button class="primary-btn" onclick="createSimulation()">Crear Simulación</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

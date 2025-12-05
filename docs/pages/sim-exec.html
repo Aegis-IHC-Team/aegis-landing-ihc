@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Simulación</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="time">Simulación</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="simExecutionScreen">
+      <div class="sim-screen" id="simScreenBg">
+        <div class="sim-header">
+          <h2 id="simTypeTitle">Simulación</h2>
+          <button class="sim-close" onclick="exitSimulation()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="progress-bar"><div class="progress-fill" id="simProgressFill"></div></div>
+
+        <div style="text-align:center; margin-bottom:30px; opacity:0.9"><div style="font-size:14px">Pregunta <span id="currentQuestionNum">1</span> de <span id="totalQuestions">5</span></div></div>
+
+        <div class="question-card" id="questionCard">
+          <div class="question-title" id="questionTitle">Pregunta</div>
+          <div class="question-text" id="questionText"></div>
+        </div>
+
+        <div id="answersContainer"></div>
+
+        <button class="primary-btn" onclick="submitAnswer()" id="submitBtn">Responder</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

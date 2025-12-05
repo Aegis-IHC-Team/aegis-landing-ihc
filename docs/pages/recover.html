@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Recuperar contraseña</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="window.location.href='login.html'" id="backBtn">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div class="time">Recuperar</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="recoverScreen">
+      <h1 class="welcome-title">Recupera tu contraseña</h1>
+      <p class="welcome-subtitle">Ingresa tu correo y te enviaremos un código de verificación para restablecer tu contraseña.</p>
+
+      <div class="input-group">
+        <input type="email" class="input-field" placeholder="tu@email.com" id="recoverEmail" />
+      </div>
+
+      <button class="primary-btn" id="recoverBtn" onclick="handleRecover()">Enviar correo</button>
+
+      <p class="link-text">
+        <a href="login.html">Volver al inicio de sesión</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- SDK de EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      emailjs.init({
+        publicKey: "GcgtNU-FEDB6nLmTp",
+      });
+    });
+  </script>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

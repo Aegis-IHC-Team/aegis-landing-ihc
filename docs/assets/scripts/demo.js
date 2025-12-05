@@ -1,5 +1,51 @@
-// GLOBAL STATE
-let currentUser = {
+// ========== STORAGE HELPERS ==========
+// Guardar usuario en localStorage
+function saveUserToStorage() {
+    try {
+        localStorage.setItem("aegis_currentUser", JSON.stringify(currentUser));
+    } catch (e) {
+        console.warn("No se pudo guardar usuario en localStorage:", e);
+    }
+}
+
+// Cargar usuario desde localStorage
+function loadUserFromStorage() {
+    try {
+        const stored = localStorage.getItem("aegis_currentUser");
+        if (stored) {
+            return JSON.parse(stored);
+        }
+    } catch (e) {
+        console.warn("No se pudo cargar usuario de localStorage:", e);
+    }
+    return null;
+}
+
+// Guardar simulaciones en localStorage
+function saveSimulationsToStorage() {
+    try {
+        localStorage.setItem("aegis_simulations", JSON.stringify(simulations));
+    } catch (e) {
+        console.warn("No se pudo guardar simulaciones en localStorage:", e);
+    }
+}
+
+// Cargar simulaciones desde localStorage
+function loadSimulationsFromStorage() {
+    try {
+        const stored = localStorage.getItem("aegis_simulations");
+        if (stored) {
+            return JSON.parse(stored);
+        }
+    } catch (e) {
+        console.warn("No se pudo cargar simulaciones de localStorage:", e);
+    }
+    return null;
+}
+
+// ========== GLOBAL STATE ==========
+// Datos por defecto (si no hay guardados)
+const defaultUser = {
     name: "Usuario Nombre",
     email: "miyaball@gmail.com",
     password: "miyaball",
@@ -7,7 +53,7 @@ let currentUser = {
     country: "pe",
 };
 
-let simulations = [
+const defaultSimulations = [
     {
         id: 1,
         type: "email",
@@ -53,6 +99,10 @@ let simulations = [
         endDate: "2025-12-02",
     },
 ];
+
+// Cargar datos guardados o usar por defecto
+let currentUser = loadUserFromStorage() || { ...defaultUser };
+let simulations = loadSimulationsFromStorage() || [...defaultSimulations];
 
 let currentSimulation = null;
 let currentQuestion = 0;
@@ -426,31 +476,52 @@ const simulationNames = {
     sweep: "Better Sweep (Avanzado)",
 };
 
+// --- Helpers defensivos ---
+function $id(id) {
+    return typeof document !== "undefined" ? document.getElementById(id) : null;
+}
+
+function $qsAll(sel) {
+    return typeof document !== "undefined" && document.querySelectorAll ? document.querySelectorAll(sel) : [];
+}
+
+
 // NAVIGATION
 let currentScreen = "splashScreen";
 const screenHistory = [];
 
 function showScreen(screenId) {
-    document
-        .querySelectorAll(".screen")
-        .forEach((s) => s.classList.remove("active"));
-    document.getElementById(screenId).classList.add("active");
+    // Safe navigation: do nothing if target screen is missing
+    const screens = $qsAll(".screen");
+    if (screens && screens.length) {
+        screens.forEach((s) => s.classList.remove("active"));
+    }
+
+    const target = $id(screenId);
+    if (!target) {
+        // If no matching screen on this page, just update currentScreen and return
+        currentScreen = screenId;
+        return;
+    }
+    target.classList.add("active");
 
     if (currentScreen !== screenId && screenId !== "splashScreen") {
         screenHistory.push(currentScreen);
     }
     currentScreen = screenId;
 
-    const backBtn = document.getElementById("backBtn");
-    if (
-        screenId === "splashScreen" ||
-        screenId === "loginScreen" ||
-        screenId === "signupScreen" ||
-        screenId === "dashboardScreen"
-    ) {
-        backBtn.style.display = "none";
-    } else {
-        backBtn.style.display = "block";
+    const backBtn = $id("backBtn");
+    if (backBtn) {
+        if (
+            screenId === "splashScreen" ||
+            screenId === "loginScreen" ||
+            screenId === "signupScreen" ||
+            screenId === "dashboardScreen"
+        ) {
+            backBtn.style.display = "none";
+        } else {
+            backBtn.style.display = "block";
+        }
     }
 
     if (screenId === "dashboardScreen") {
@@ -461,7 +532,60 @@ function showScreen(screenId) {
         updateProfile();
     }
 
-    window.scrollTo(0, 0);
+    try {
+        window.scrollTo(0, 0);
+    } catch (e) {
+        // ignore in non-browser contexts
+    }
+}
+
+// Navigation helper: if screen doesn't exist on current page, redirect to appropriate page
+function safeShowScreen(screenId, redirectPage = null) {
+    const target = $id(screenId);
+
+    if (target) {
+        // Screen exists, show it normally
+        showScreen(screenId);
+        return;
+    }
+
+    // If caller provided an explicit redirect page, use it
+    if (redirectPage) {
+        window.location.href = redirectPage;
+        return;
+    }
+
+    // More complete mapping from SPA screen IDs to standalone pages
+    const redirectMap = {
+        "dashboardScreen": "dashboard.html",
+        "simulationsScreen": "simulations.html",
+        "profileScreen": "profile.html",
+        "resultsScreen": "results.html",
+        "scheduleScreen": "create-sim.html",
+        "previewScreen": "create-sim.html",
+        "personalizeScreen": "create-sim.html",
+        "assignScreen": "create-sim.html",
+        "simExecutionScreen": "sim-exec.html",
+        "signupScreen": "signup.html",
+        "loginScreen": "login.html",
+        "resetScreen": "recover.html",
+        "settingsScreen": "settings.html",
+        "changePasswordScreen": "change-password.html"
+    };
+
+    const redirect = redirectMap[screenId];
+    if (redirect) {
+        window.location.href = redirect;
+    } else {
+        // If we don't know where to go, default to the SPA entry (spa.html) or index
+        // Prefer `spa.html` if it exists; otherwise fallback to `index.html`.
+        try {
+            // Basic check: if current origin + /spa.html exists, we'll redirect
+            window.location.href = "spa.html";
+        } catch (e) {
+            window.location.href = "index.html";
+        }
+    }
 }
 
 function goBack() {
@@ -469,6 +593,13 @@ function goBack() {
         const previousScreen = screenHistory.pop();
         currentScreen = previousScreen;
         showScreen(previousScreen);
+    } else {
+        // Si no hay historial, volver atrás en el navegador
+        try {
+            history.back();
+        } catch (e) {
+            window.location.href = "dashboard.html";
+        }
     }
 }
 
@@ -477,16 +608,27 @@ setInterval(() => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
-    document.getElementById("currentTime").textContent = `${hours}:${minutes}`;
+    const timeEl = $id("currentTime");
+    if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
 }, 1000);
 
 // AUTH
 function handleLogin() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+    const emailEl = $id("loginEmail");
+    const pwdEl = $id("loginPassword");
+    if (!emailEl || !pwdEl) return; // nothing to do on this page
+
+    const email = emailEl.value;
+    const password = pwdEl.value;
 
     if (email === currentUser.email && password === currentUser.password) {
-        showScreen("dashboardScreen");
+        // Redirige a dashboard si estamos en una página individual
+        const dashboardScreen = $id("dashboardScreen");
+        if (dashboardScreen) {
+            showScreen("dashboardScreen");
+        } else {
+            window.location.href = "dashboard.html";
+        }
     } else {
         alert(
             "Credenciales incorrectas.\n\nPrueba con:\nEmail: " +
@@ -498,10 +640,16 @@ function handleLogin() {
 }
 
 function handleSignup() {
-    const name = document.getElementById("signupName").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-    const terms = document.getElementById("terms").checked;
+    const nameEl = $id("signupName");
+    const emailEl = $id("signupEmail");
+    const pwdEl = $id("signupPassword");
+    const termsEl = $id("terms");
+    if (!nameEl || !emailEl || !pwdEl || !termsEl) return;
+
+    const name = nameEl.value;
+    const email = emailEl.value;
+    const password = pwdEl.value;
+    const terms = termsEl.checked;
 
     if (!name || !email || !password) {
         alert("Por favor completa todos los campos");
@@ -516,55 +664,98 @@ function handleSignup() {
     currentUser.name = name;
     currentUser.email = email;
     currentUser.password = password;
+    
+    // Guardar nuevo usuario en localStorage
+    saveUserToStorage();
+    
     alert("¡Cuenta creada exitosamente!");
-    showScreen("dashboardScreen");
+    
+    // Siempre redirige a login después del registro (no a dashboard)
+    const signupScreen = $id("signupScreen");
+    if (signupScreen) {
+        // En página individual (signup.html), redirige a login
+        window.location.href = "login.html";
+    } else {
+        // En SPA, vuelve a login screen
+        showScreen("loginScreen");
+    }
 }
 
 function logout() {
     if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
         screenHistory.length = 0;
-        showScreen("loginScreen");
+        // If we're inside SPA use the login screen, otherwise redirect to login page
+        const loginScreen = $id("loginScreen");
+        if (loginScreen) {
+            showScreen("loginScreen");
+        } else {
+            // Use safeShowScreen to ensure correct redirect on standalone pages
+            safeShowScreen("loginScreen", "login.html");
+        }
     }
 }
 
 function togglePassword(inputId) {
-    const input = document.getElementById(inputId);
+    const input = $id(inputId);
+    if (!input) return;
     const icon = input.nextElementSibling;
+    const i = icon ? icon.querySelector("i") : null;
     if (input.type === "password") {
         input.type = "text";
-        icon.textContent = "🙈";
+        if (i) {
+            i.classList.remove("fa-eye");
+            i.classList.add("fa-eye-slash");
+        }
     } else {
         input.type = "password";
-        icon.textContent = "👁️";
+        if (i) {
+            i.classList.remove("fa-eye-slash");
+            i.classList.add("fa-eye");
+        }
     }
 }
 
 // PROFILE
 function updateProfile() {
-    document.getElementById("profileName").textContent = currentUser.name;
-    document.getElementById("profileEmail").textContent = currentUser.email;
-    document.getElementById("fullName").textContent = currentUser.name;
-    document.getElementById("email").textContent = currentUser.email;
-    document.getElementById("phone").textContent = currentUser.phone;
+    const profileName = $id("profileName");
+    if (!profileName) return;
+    const profileEmail = $id("profileEmail");
+    const fullName = $id("fullName");
+    const email = $id("email");
+    const phone = $id("phone");
+    const countryEl = $id("country");
+    const avatar = $id("profileAvatar");
 
-    const countryFlags = {
-        pe: "🇵🇪 Perú",
-        ar: "🇦🇷 Argentina",
-        br: "🇧🇷 Brasil",
-        mx: "🇲🇽 México",
+    profileName.textContent = currentUser.name;
+    if (profileEmail) profileEmail.textContent = currentUser.email;
+    if (fullName) fullName.textContent = currentUser.name;
+    if (email) email.textContent = currentUser.email;
+    if (phone) phone.textContent = currentUser.phone;
+
+    const countryNames = {
+        pe: "Perú",
+        ar: "Argentina",
+        br: "Brasil",
+        mx: "México",
     };
-    document.getElementById("country").textContent =
-        countryFlags[currentUser.country] || "🌎 Internacional";
+    const countryText = countryNames[currentUser.country] || "Internacional";
+    if (countryEl) countryEl.innerHTML = `<i class="fa-solid fa-flag" aria-hidden="true"></i> ${countryText}`;
 
     const initial = currentUser.name.charAt(0).toUpperCase();
-    document.getElementById("profileAvatar").textContent = initial;
+    if (avatar) avatar.textContent = initial;
 }
 
 function saveProfile() {
-    const newName = document.getElementById("editName").value;
-    const newEmail = document.getElementById("editEmail").value;
-    const newPhone = document.getElementById("editPhone").value;
-    const newCountry = document.getElementById("editCountry").value;
+    const newNameEl = $id("editName");
+    const newEmailEl = $id("editEmail");
+    const newPhoneEl = $id("editPhone");
+    const newCountryEl = $id("editCountry");
+    if (!newNameEl || !newEmailEl) return;
+
+    const newName = newNameEl.value;
+    const newEmail = newEmailEl.value;
+    const newPhone = newPhoneEl ? newPhoneEl.value : "";
+    const newCountry = newCountryEl ? newCountryEl.value : currentUser.country;
 
     if (!newName || !newEmail) {
         alert("Por favor completa todos los campos obligatorios");
@@ -582,14 +773,22 @@ function saveProfile() {
     currentUser.phone = newPhone;
     currentUser.country = newCountry;
 
+    // Guardar cambios en localStorage
+    saveUserToStorage();
+
     alert("¡Cambios guardados exitosamente!");
-    showScreen("profileScreen");
+    safeShowScreen("profileScreen");
 }
 
 function changePassword() {
-    const currentPwd = document.getElementById("currentPassword").value;
-    const newPwd = document.getElementById("newPassword").value;
-    const confirmPwd = document.getElementById("confirmPassword").value;
+    const currentPwdEl = $id("currentPassword");
+    const newPwdEl = $id("newPassword");
+    const confirmPwdEl = $id("confirmPassword");
+    if (!currentPwdEl || !newPwdEl || !confirmPwdEl) return;
+
+    const currentPwd = currentPwdEl.value;
+    const newPwd = newPwdEl.value;
+    const confirmPwd = confirmPwdEl.value;
 
     if (!currentPwd || !newPwd || !confirmPwd) {
         alert("Por favor completa todos los campos de contraseña");
@@ -597,50 +796,158 @@ function changePassword() {
     }
 
     if (currentPwd !== currentUser.password) {
-        alert("❌ La contraseña actual es incorrecta");
+        alert("La contraseña actual es incorrecta.");
         return;
     }
 
     if (newPwd.length < 6) {
-        alert("❌ La nueva contraseña debe tener al menos 6 caracteres");
+        alert("La nueva contraseña debe tener al menos 6 caracteres.");
         return;
     }
 
     if (newPwd !== confirmPwd) {
-        alert(
-            "❌ Las contraseñas nuevas no coinciden\n\nAsegúrate de escribir la misma contraseña en ambos campos.\n\nPuedes usar el ícono del ojo 👁️ para verificar que sean iguales."
-        );
+        alert("Las contraseñas nuevas no coinciden. Asegúrate de escribir la misma contraseña en ambos campos.");
         return;
     }
 
     currentUser.password = newPwd;
-    document.getElementById("currentPassword").value = "";
-    document.getElementById("newPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
+    currentPwdEl.value = "";
+    newPwdEl.value = "";
+    confirmPwdEl.value = "";
 
-    alert(
-        "✅ ¡Contraseña cambiada exitosamente!\n\nTu nueva contraseña es: " + newPwd
-    );
+    // Guardar cambios en localStorage
+    saveUserToStorage();
+
+    // Redirigir a la página de perfil y mostrar confirmación (Opción C)
+    // Usamos un hash para indicar que la contraseña fue actualizada
+    if (window.location.pathname.endsWith("change-password.html")) {
+        window.location.href = "profile.html#password-updated";
+    } else {
+        // En SPA mostramos la pantalla de perfil
+        safeShowScreen("profileScreen");
+        // enviar un pequeño indicativo para SPA (show toast directamente)
+        showToast("Contraseña actualizada");
+    }
+}
+
+// Toast helper: crea una notificación temporal en pantalla
+function showToast(message, timeout = 3000) {
+    try {
+        const toast = document.createElement("div");
+        toast.className = "aegis-toast";
+        toast.textContent = message;
+        toast.style.position = "fixed";
+        toast.style.right = "20px";
+        toast.style.bottom = "20px";
+        toast.style.background = "rgba(34, 197, 94, 0.95)"; // verde
+        toast.style.color = "#fff";
+        toast.style.padding = "10px 16px";
+        toast.style.borderRadius = "8px";
+        toast.style.boxShadow = "0 6px 18px rgba(0,0,0,0.12)";
+        toast.style.zIndex = 9999;
+        toast.style.fontFamily = "Inter, system-ui, sans-serif";
+        toast.style.fontSize = "14px";
+        toast.style.opacity = "0";
+        toast.style.transition = "opacity 240ms ease-in-out, transform 240ms";
+        toast.style.transform = "translateY(8px)";
+
+        document.body.appendChild(toast);
+
+        // forzar reflow para animar
+        // eslint-disable-next-line no-unused-expressions
+        toast.offsetWidth;
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(8px)";
+            setTimeout(() => {
+                if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 260);
+        }, timeout);
+    } catch (e) {
+        // si falla, caer en alert como fallback
+        try {
+            alert(message);
+        } catch (e) {
+            // ignore
+        }
+    }
+}
+
+function handleResetFromEmail() {
+    const emailEl = $id("resetEmail");
+    const newPwdEl = $id("resetNewPassword");
+    const confirmPwdEl = $id("resetConfirmPassword");
+    if (!emailEl || !newPwdEl || !confirmPwdEl) return;
+
+    const email = emailEl.value.trim();
+    const newPwd = newPwdEl.value;
+    const confirmPwd = confirmPwdEl.value;
+
+    if (!email || !newPwd || !confirmPwd) {
+        alert("Completa todos los campos.");
+        return;
+    }
+
+    if (email !== currentUser.email) {
+        alert("Este correo no está registrado en esta demo.");
+        return;
+    }
+
+    if (newPwd.length < 6) {
+        alert("La nueva contraseña debe tener al menos 6 caracteres.");
+        return;
+    }
+
+    if (newPwd !== confirmPwd) {
+        alert("Las contraseñas no coinciden.");
+        return;
+    }
+
+    currentUser.password = newPwd;
+    
+    // Guardar nueva contraseña en localStorage
+    saveUserToStorage();
+
+    const loginEmailEl = $id("loginEmail");
+    const loginPwdEl = $id("loginPassword");
+    if (loginEmailEl) loginEmailEl.value = email;
+    if (loginPwdEl) loginPwdEl.value = newPwd;
+
+    alert("Listo, tu contraseña fue actualizada. Entrando al panel...");
+
+    if (window.location.hash === "#reset") {
+        history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    safeShowScreen("dashboardScreen");
 }
 
 // DASHBOARD
 function updateDashboard() {
-    document.getElementById("userName").textContent =
-        currentUser.name.split(" ")[0];
+    const userNameEl = $id("userName");
+    if (!userNameEl) return;
+    userNameEl.textContent = currentUser.name.split(" ")[0];
 
     const completed = simulations.filter((s) => s.status === "completed").length;
     const avgScore =
         Math.round(
             simulations
                 .filter((s) => s.score > 0)
-                .reduce((acc, s) => acc + s.score, 0) / completed
+                .reduce((acc, s) => acc + s.score, 0) / (completed || 1)
         ) || 0;
 
-    document.getElementById("totalSims").textContent = simulations.length;
-    document.getElementById("completedSims").textContent = completed;
-    document.getElementById("avgScore").textContent = avgScore + "%";
+    const totalSimsEl = $id("totalSims");
+    const completedSimsEl = $id("completedSims");
+    const avgScoreEl = $id("avgScore");
+    if (totalSimsEl) totalSimsEl.textContent = simulations.length;
+    if (completedSimsEl) completedSimsEl.textContent = completed;
+    if (avgScoreEl) avgScoreEl.textContent = avgScore + "%";
 
-    const recentList = document.getElementById("recentSimsList");
+    const recentList = $id("recentSimsList");
+    if (!recentList) return;
     recentList.innerHTML = simulations
         .slice(0, 3)
         .map(
@@ -673,7 +980,8 @@ function renderSimulationsList(filter = "all") {
         filtered = simulations.filter((s) => s.status === "completed");
     }
 
-    const listContainer = document.getElementById("simulationsList");
+    const listContainer = $id("simulationsList");
+    if (!listContainer) return;
     if (filtered.length === 0) {
         listContainer.innerHTML =
             '<p style="text-align:center; color:#999; padding:40px 0;">No hay simulaciones en esta categoría</p>';
@@ -689,10 +997,10 @@ function renderSimulationsList(filter = "all") {
                 <div class="sim-stats">
                     ${
                 sim.status === "completed"
-                    ? "✓ Completada"
-                    : "⏱️ Pendiente"
+                    ? '<i class="fa-solid fa-circle-check"></i> Completada'
+                    : '<i class="fa-solid fa-clock"></i> Pendiente'
             } • 
-                    Dificultad: ${"⭐".repeat(sim.difficulty)} • 
+                    Dificultad: ${('<i class="fa-solid fa-star"></i>').repeat(sim.difficulty)} • 
                     ${sim.date}
                 </div>
             </div>
@@ -728,11 +1036,7 @@ function viewSimulation(simId) {
 
     if (sim.status === "completed") {
         alert(
-            `Simulación completada\n\nPuntuación: ${
-                sim.score
-            }%\nDificultad: ${"⭐".repeat(
-                sim.difficulty
-            )}\n\n¿Quieres volver a intentarlo?`
+            `Simulación completada\n\nPuntuación: ${sim.score}%\nDificultad: ${sim.difficulty}/5\n\n¿Quieres volver a intentarlo?`
         );
         if (confirm("¿Iniciar de nuevo?")) {
             startSimulation(sim);
@@ -755,10 +1059,12 @@ function selectSimType(type) {
         autoSend: false,
     };
 
-    document.getElementById("selectedSimType").textContent =
-        simulationNames[type];
-    document.getElementById("simDifficulty").textContent =
-        "Dificultad: " + "⭐".repeat(currentSimulation.difficulty);
+    const selectedSimTypeEl = $id("selectedSimType");
+    if (selectedSimTypeEl) selectedSimTypeEl.textContent = simulationNames[type];
+    const simDifficultyEl = $id("simDifficulty");
+    if (simDifficultyEl) {
+        simDifficultyEl.innerHTML = ('<i class="fa-solid fa-star"></i>').repeat(currentSimulation.difficulty) + '<span style="opacity: 0.3;">' + ('<i class="fa-solid fa-star"></i>').repeat(5 - currentSimulation.difficulty) + '</span>';
+    }
 
     const descriptions = {
         email:
@@ -770,10 +1076,29 @@ function selectSimType(type) {
             "Simulación avanzada que combina múltiples técnicas de ciberseguridad y mejores prácticas.",
     };
 
-    document.getElementById("simDescription").value = descriptions[type];
-    document.getElementById("simTitle").value = "";
+    const simDescriptionEl = $id("simDescription");
+    const simTitleEl = $id("simTitle");
+    if (simDescriptionEl) simDescriptionEl.value = descriptions[type];
+    if (simTitleEl) simTitleEl.value = "";
 
-    showScreen("personalizeScreen");
+    safeShowScreen("personalizeScreen");
+}
+
+// Helper: Ir a personalizar simulación (usado en create-sim.html)
+function goToPersonalize() {
+    const simType = currentSimulation?.type;
+    if (!simType) {
+        alert("Por favor selecciona un tipo de simulación");
+        return;
+    }
+    // Si estamos en página independiente, redirigir a personalización dentro de SPA o crear-sim
+    const personalizeScreen = $id("personalizeScreen");
+    if (personalizeScreen) {
+        showScreen("personalizeScreen");
+    } else {
+        // En página independiente, redirigir a spa.html o similar
+        window.location.href = "../pages/spa.html?type=" + simType;
+    }
 }
 
 function goToAssignParticipants() {
@@ -790,7 +1115,7 @@ function goToAssignParticipants() {
 
     document.getElementById("participantInput").value = "";
     renderParticipants();
-    showScreen("assignScreen");
+    safeShowScreen("assignScreen");
 }
 
 function addParticipant() {
@@ -827,7 +1152,8 @@ function removeParticipant(index) {
 }
 
 function renderParticipants() {
-    const container = document.getElementById("participantsList");
+    const container = $id("participantsList");
+    if (!container) return;
     if (tempSimData.participants.length === 0) {
         container.innerHTML =
             '<p style="color:#999; font-size:14px;">No hay participantes agregados</p>';
@@ -838,7 +1164,7 @@ function renderParticipants() {
         .map(
             (p, i) => `
         <div class="participant-tag">
-            ${p} <span class="remove-tag" onclick="removeParticipant(${i})">✕</span>
+            ${p} <span class="remove-tag" onclick="removeParticipant(${i})"><i class="fa-solid fa-xmark"></i></span>
         </div>
     `
         )
@@ -857,14 +1183,12 @@ function goToSchedule() {
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
-    document.getElementById("startDate").value = tomorrow
-        .toISOString()
-        .split("T")[0];
-    document.getElementById("endDate").value = nextWeek
-        .toISOString()
-        .split("T")[0];
+    const startDateEl = $id("startDate");
+    const endDateEl = $id("endDate");
+    if (startDateEl) startDateEl.value = tomorrow.toISOString().split("T")[0];
+    if (endDateEl) endDateEl.value = nextWeek.toISOString().split("T")[0];
 
-    showScreen("scheduleScreen");
+    safeShowScreen("scheduleScreen");
 }
 
 function toggleSwitch(element) {
@@ -873,15 +1197,18 @@ function toggleSwitch(element) {
 }
 
 function goToPreview() {
-    const startDate = document.getElementById("startDate").value;
-    const startTime = document.getElementById("startTime").value;
-    const endDate = document.getElementById("endDate").value;
-    const endTime = document.getElementById("endTime").value;
-
-    if (!startDate || !endDate) {
+    const startDateEl = $id("startDate");
+    const startTimeEl = $id("startTime");
+    const endDateEl = $id("endDate");
+    const endTimeEl = $id("endTime");
+    if (!startDateEl || !endDateEl) {
         alert("Por favor completa las fechas de inicio y fin");
         return;
     }
+    const startDate = startDateEl.value;
+    const startTime = startTimeEl ? startTimeEl.value : "";
+    const endDate = endDateEl.value;
+    const endTime = endTimeEl ? endTimeEl.value : "";
 
     if (new Date(endDate) < new Date(startDate)) {
         alert("La fecha de fin debe ser posterior a la fecha de inicio");
@@ -893,24 +1220,23 @@ function goToPreview() {
     tempSimData.endDate = endDate;
     tempSimData.endTime = endTime;
 
-    document.getElementById("previewType").textContent =
-        simulationNames[currentSimulation.type];
-    document.getElementById("previewTitle").textContent = currentSimulation.title;
-    document.getElementById("previewDescription").textContent =
-        currentSimulation.description;
-    document.getElementById("previewParticipants").textContent =
-        tempSimData.participants.length +
-        " usuario" +
-        (tempSimData.participants.length !== 1 ? "s" : "");
-    document.getElementById("previewDifficulty").textContent = "⭐".repeat(
-        currentSimulation.difficulty
-    );
-    document.getElementById("previewStartDate").textContent =
-        formatDate(startDate) + " " + startTime;
-    document.getElementById("previewEndDate").textContent =
-        formatDate(endDate) + " " + endTime;
+    const previewTypeEl = $id("previewType");
+    const previewTitleEl = $id("previewTitle");
+    const previewDescriptionEl = $id("previewDescription");
+    const previewParticipantsEl = $id("previewParticipants");
+    const previewDifficultyEl = $id("previewDifficulty");
+    const previewStartDateEl = $id("previewStartDate");
+    const previewEndDateEl = $id("previewEndDate");
 
-    showScreen("previewScreen");
+    if (previewTypeEl) previewTypeEl.textContent = simulationNames[currentSimulation.type];
+    if (previewTitleEl) previewTitleEl.textContent = currentSimulation.title;
+    if (previewDescriptionEl) previewDescriptionEl.textContent = currentSimulation.description;
+    if (previewParticipantsEl) previewParticipantsEl.textContent = tempSimData.participants.length + " usuario" + (tempSimData.participants.length !== 1 ? "s" : "");
+    if (previewDifficultyEl) previewDifficultyEl.innerHTML = ('<i class="fa-solid fa-star"></i>').repeat(currentSimulation.difficulty);
+    if (previewStartDateEl) previewStartDateEl.textContent = formatDate(startDate) + " " + startTime;
+    if (previewEndDateEl) previewEndDateEl.textContent = formatDate(endDate) + " " + endTime;
+
+    safeShowScreen("previewScreen");
 }
 
 function formatDate(dateString) {
@@ -939,8 +1265,12 @@ function createSimulation() {
     };
 
     simulations.unshift(newSim);
+    
+    // Guardar simulaciones actualizadas en localStorage
+    saveSimulationsToStorage();
+    
     alert(
-        "✅ ¡Simulación creada exitosamente!\n\n" +
+        "¡Simulación creada exitosamente!\n\n" +
         "Título: " +
         newSim.title +
         "\n" +
@@ -954,7 +1284,7 @@ function createSimulation() {
     currentSimulation = null;
     tempSimData = { participants: [], autoSend: false };
 
-    showScreen("simulationsScreen");
+    safeShowScreen("simulationsScreen");
 }
 
 // START SIMULATION
@@ -971,51 +1301,65 @@ function startSimulation(sim) {
         return;
     }
 
-    document.getElementById("simScreenBg").style.background =
-        simulationColors[sim.type].bg;
-    document.getElementById("simTypeTitle").textContent = sim.title;
-    document.getElementById("totalQuestions").textContent = questions.length;
+    const simScreenBg = $id("simScreenBg");
+    const simTypeTitle = $id("simTypeTitle");
+    const totalQuestionsEl = $id("totalQuestions");
+    if (simScreenBg) simScreenBg.style.background = simulationColors[sim.type].bg;
+    if (simTypeTitle) simTypeTitle.textContent = sim.title;
+    if (totalQuestionsEl) totalQuestionsEl.textContent = questions.length;
 
     showQuestion();
-    showScreen("simExecutionScreen");
+    safeShowScreen("simExecutionScreen");
 }
 
 function showQuestion() {
+    if (!currentSimulation) return;
     const questions = simulationQuestions[currentSimulation.type];
+    if (!questions) return;
     const question = questions[currentQuestion];
 
-    document.getElementById("currentQuestionNum").textContent =
-        currentQuestion + 1;
-    document.getElementById("questionTitle").textContent = question.title;
-    document.getElementById("questionText").textContent = question.text;
+    const currentQuestionNumEl = $id("currentQuestionNum");
+    const questionTitleEl = $id("questionTitle");
+    const questionTextEl = $id("questionText");
+    const simProgressFillEl = $id("simProgressFill");
+    const answersContainer = $id("answersContainer");
+    const submitBtn = $id("submitBtn");
+
+    if (currentQuestionNumEl) currentQuestionNumEl.textContent = currentQuestion + 1;
+    if (questionTitleEl) questionTitleEl.textContent = question.title;
+    if (questionTextEl) questionTextEl.textContent = question.text;
 
     const progress = ((currentQuestion + 1) / questions.length) * 100;
-    document.getElementById("simProgressFill").style.width = progress + "%";
+    if (simProgressFillEl) simProgressFillEl.style.width = progress + "%";
 
-    const answersContainer = document.getElementById("answersContainer");
-    answersContainer.innerHTML = question.answers
-        .map(
-            (answer, index) => `
+    if (answersContainer) {
+        answersContainer.innerHTML = question.answers
+            .map(
+                (answer, index) => `
         <div class="answer-option" onclick="selectAnswerOption(${index})">
-            <span id="answer-icon-${index}">⚪</span>
+            <span id="answer-icon-${index}"><i class="fa-regular fa-circle"></i></span>
             <span>${answer.text}</span>
         </div>
     `
-        )
-        .join("");
+            )
+            .join("");
+    }
 
     selectedAnswer = null;
-    document.getElementById("submitBtn").textContent = "Responder";
+    if (submitBtn) submitBtn.textContent = "Responder";
 }
 
 function selectAnswerOption(index) {
-    document.querySelectorAll(".answer-option").forEach((opt, i) => {
+    const opts = document.querySelectorAll ? document.querySelectorAll(".answer-option") : [];
+    opts.forEach((opt, i) => {
         opt.classList.remove("selected");
-        document.getElementById(`answer-icon-${i}`).textContent = "⚪";
+        const el = $id(`answer-icon-${i}`);
+        if (el) el.innerHTML = '<i class="fa-regular fa-circle"></i>';
     });
 
-    document.querySelectorAll(".answer-option")[index].classList.add("selected");
-    document.getElementById(`answer-icon-${index}`).textContent = "✓";
+    if (opts[index]) opts[index].classList.add("selected");
+    const selEl = $id(`answer-icon-${index}`);
+    if (selEl) selEl.innerHTML = '<i class="fa-solid fa-check"></i>';
     selectedAnswer = index;
 }
 
@@ -1024,18 +1368,22 @@ function submitAnswer() {
         alert("Por favor selecciona una respuesta");
         return;
     }
-
+    if (!currentSimulation) return;
     const questions = simulationQuestions[currentSimulation.type];
+    if (!questions) return;
     const question = questions[currentQuestion];
     const isCorrect = question.answers[selectedAnswer].correct;
 
-    document.querySelectorAll(".answer-option").forEach((opt, i) => {
+    const opts = document.querySelectorAll ? document.querySelectorAll(".answer-option") : [];
+    opts.forEach((opt, i) => {
         if (question.answers[i].correct) {
             opt.classList.add("correct");
-            document.getElementById(`answer-icon-${i}`).textContent = "✓";
+            const el = $id(`answer-icon-${i}`);
+            if (el) el.innerHTML = '<i class="fa-solid fa-check"></i>';
         } else if (i === selectedAnswer && !isCorrect) {
             opt.classList.add("wrong");
-            document.getElementById(`answer-icon-${i}`).textContent = "✗";
+            const el = $id(`answer-icon-${i}`);
+            if (el) el.innerHTML = '<i class="fa-solid fa-xmark"></i>';
         }
     });
 
@@ -1044,11 +1392,7 @@ function submitAnswer() {
     }
 
     setTimeout(() => {
-        alert(
-            isCorrect
-                ? "¡Correcto! 🎉\n\n" + question.feedback
-                : "❌ Incorrecto\n\n" + question.feedback
-        );
+        alert(isCorrect ? "¡Correcto!" + "\n\n" + question.feedback : "Incorrecto" + "\n\n" + question.feedback);
 
         currentQuestion++;
         if (currentQuestion < questions.length) {
@@ -1061,7 +1405,7 @@ function submitAnswer() {
 
 function exitSimulation() {
     if (confirm("¿Estás seguro de que quieres salir? Perderás tu progreso.")) {
-        showScreen("simulationsScreen");
+        safeShowScreen("simulationsScreen");
     }
 }
 
@@ -1075,27 +1419,28 @@ function showResults() {
     const seconds = timeElapsed % 60;
     const points = correctAnswersCount * 100;
 
-    document.getElementById("finalScore").textContent = score + "%";
-    document.getElementById(
-        "correctAnswers"
-    ).textContent = `${correctAnswersCount}/${totalQuestions}`;
-    document.getElementById("timeSpent").textContent = `${minutes}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
-    document.getElementById("pointsEarned").textContent = points;
+    const finalScoreEl = $id("finalScore");
+    const correctAnswersEl = $id("correctAnswers");
+    const timeSpentEl = $id("timeSpent");
+    const pointsEarnedEl = $id("pointsEarned");
+    const feedbackSectionEl = $id("feedbackSection");
+
+    if (finalScoreEl) finalScoreEl.textContent = score + "%";
+    if (correctAnswersEl) correctAnswersEl.textContent = `${correctAnswersCount}/${totalQuestions}`;
+    if (timeSpentEl) timeSpentEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    if (pointsEarnedEl) pointsEarnedEl.textContent = points;
 
     let feedback = "";
     if (score >= 80) {
-        feedback =
-            "🎉 ¡Excelente trabajo! Tienes un gran conocimiento de ciberseguridad.";
+        feedback = `<i class="fa-solid fa-trophy"></i> ¡Excelente trabajo! Tienes un gran conocimiento de ciberseguridad.`;
     } else if (score >= 60) {
-        feedback = "👍 Buen trabajo. Hay áreas donde puedes mejorar.";
+        feedback = `<i class="fa-solid fa-thumbs-up"></i> Buen trabajo. Hay áreas donde puedes mejorar.`;
     } else {
-        feedback =
-            "📚 Necesitas practicar más. Revisa los conceptos básicos de ciberseguridad.";
+        feedback = `<i class="fa-solid fa-book"></i> Necesitas practicar más. Revisa los conceptos básicos de ciberseguridad.`;
     }
 
-    document.getElementById("feedbackSection").innerHTML = `
+    if (feedbackSectionEl) {
+        feedbackSectionEl.innerHTML = `
         <h3 style="font-size:18px; margin-bottom:10px;">Retroalimentación</h3>
         <p style="font-size:14px; line-height:1.6;">${feedback}</p>
         <div style="margin-top:20px;">
@@ -1106,6 +1451,7 @@ function showResults() {
             • Reconocimiento de patrones
         </div>
     `;
+    }
 
     const simIndex = simulations.findIndex((s) => s.id === currentSimulation.id);
     if (simIndex !== -1) {
@@ -1114,14 +1460,112 @@ function showResults() {
         simulations[simIndex].score = score;
     }
 
-    showScreen("resultsScreen");
+    // Guardar simulaciones actualizadas en localStorage
+    saveSimulationsToStorage();
+
+    safeShowScreen("resultsScreen");
 }
 
 function finishSimulation() {
-    showScreen("dashboardScreen");
+    safeShowScreen("dashboardScreen");
 }
 
-// INITIALIZE
-setTimeout(() => {
-    showScreen("loginScreen");
-}, 2000);
+function handleRecover() {
+    const emailInput = $id("recoverEmail");
+    if (!emailInput) return;
+    const emailValue = emailInput.value.trim();
+
+    if (!emailValue) {
+        alert("Ingresa un correo válido.");
+        return;
+    }
+
+    const button = $id("recoverBtn");
+    const originalHTML = button ? button.innerHTML : null;
+
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = "Enviando...";
+    }
+
+    if (typeof emailjs === "undefined" || !emailjs.send) {
+        // EmailJS no está disponible en este entorno; simular respuesta
+        setTimeout(() => {
+            if (button) {
+                button.innerHTML = '<i class="fa-solid fa-circle-check"></i> Correo enviado';
+            }
+            alert("Listo. Revisa tu bandeja de entrada o spam.");
+            emailInput.value = "";
+            setTimeout(() => {
+                if (button && originalHTML) {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                }
+                safeShowScreen("loginScreen", "login.html");
+            }, 800);
+        }, 600);
+        return;
+    }
+
+    emailjs
+        .send("service_aegis", "template_aegispassword", {
+            email: emailValue,
+        })
+        .then(() => {
+            if (button) button.innerHTML = '<i class="fa-solid fa-circle-check"></i> Correo enviado';
+            alert("Listo. Revisa tu bandeja de entrada o spam.");
+            emailInput.value = "";
+            setTimeout(() => {
+                if (button && originalHTML) {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                }
+                safeShowScreen("loginScreen", "login.html");
+            }, 2000);
+        })
+        .catch((error) => {
+            console.error("Error al enviar:", error);
+            alert("Hubo un problema al enviar el correo. Intenta otra vez.");
+            if (button) {
+                button.textContent = originalHTML || "Enviar correo";
+                button.disabled = false;
+            }
+        });
+}
+
+const startHash = window.location.hash;
+
+// Determinar si estamos en la entrada SPA/landing o en una página independiente
+const isInsidePages = window.location.pathname.includes("/pages/");
+const isSPAEntry = !!$id("splashScreen") || window.location.pathname.endsWith("index.html") || window.location.pathname.endsWith("/") || window.location.pathname.endsWith("spa.html");
+
+if (startHash === "#reset") {
+  // Si viene desde el correo, intentamos mostrar la pantalla de reset si existe en la página
+  if ($id("resetScreen")) {
+    safeShowScreen("resetScreen");
+  } else {
+    // Si no existe la pantalla (estamos en página independiente), redirigimos a la página de recuperación
+    const redirectRecover = isInsidePages ? "recover.html" : "pages/recover.html";
+    try {
+      window.location.href = redirectRecover;
+    } catch (e) {
+      // fallback: mostrar el login en SPA
+      safeShowScreen("resetScreen");
+    }
+  }
+} else if (isSPAEntry && $id("splashScreen")) {
+  // Solo mostrar splash screen en SPA (si existe splashScreen)
+  setTimeout(() => {
+    safeShowScreen("loginScreen");
+  }, 2000);
+}
+
+// Mostrar toast cuando se llega con hash de contraseña actualizada (profile.html#password-updated)
+if (window.location.hash === "#password-updated") {
+  try {
+    history.replaceState({}, document.title, window.location.pathname + window.location.search);
+  } catch (e) {
+    // ignore
+  }
+  showToast("Contraseña actualizada");
+}

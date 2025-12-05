@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Simulaciones</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="time">Simulaciones</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="simulationsScreen">
+      <h1 class="welcome-title">Mis Simulaciones</h1>
+      <p class="welcome-subtitle">Historial de todas tus simulaciones completadas</p>
+
+      <div id="simulationsList" class="sim-grid"></div>
+
+      <div style="text-align: center; margin-top: 40px; opacity: 0.6;">
+        <i class="fa-solid fa-inbox" style="font-size: 48px; display: block; margin-bottom: 15px;"></i>
+        <p>Completa tu primera simulación para ver tu historial</p>
+        <a href="create-sim.html" class="primary-btn" style="display: inline-block; margin-top: 20px;">Crear Simulación</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

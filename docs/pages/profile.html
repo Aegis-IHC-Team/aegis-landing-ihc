@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Mi Perfil</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="time">Mi Perfil</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="profileScreen">
+      <h1 class="welcome-title">Mi Perfil</h1>
+      <p class="welcome-subtitle">Administra tu información personal</p>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Nombre</label>
+        <input type="text" class="input-field" placeholder="Nombre completo" id="profileName" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Email</label>
+        <input type="email" class="input-field" placeholder="Email" id="profileEmail" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Teléfono</label>
+        <input type="tel" class="input-field" placeholder="Teléfono" id="profilePhone" />
+      </div>
+
+      <div class="input-group">
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">País</label>
+        <select class="input-field" id="profileCountry">
+          <option value="">Selecciona tu país</option>
+          <option value="pe">Perú</option>
+          <option value="co">Colombia</option>
+          <option value="ar">Argentina</option>
+          <option value="mx">México</option>
+        </select>
+      </div>
+
+      <button class="primary-btn" onclick="updateProfile()">Guardar Cambios</button>
+      <button class="secondary-btn" style="margin-top: 10px;" onclick="location.href='change-password.html'">Cambiar Contraseña</button>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

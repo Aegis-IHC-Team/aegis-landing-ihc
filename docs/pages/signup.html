@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Registro</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="width:36px"></div>
+      <div class="time">Registro</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="signupScreen">
+      <h1 class="welcome-title">Crea una nueva cuenta</h1>
+      <p class="welcome-subtitle">Regístrate y accede a demos para aprender sobre riesgos en internet.</p>
+
+      <div class="social-buttons">
+        <button class="social-btn"><i class="fa-brands fa-google" aria-hidden="true"></i> Google</button>
+        <button class="social-btn"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> Facebook</button>
+      </div>
+
+      <div class="input-group">
+        <input type="text" class="input-field" placeholder="Nombre completo" id="signupName" />
+      </div>
+
+      <div class="input-group">
+        <input type="email" class="input-field" placeholder="Email" id="signupEmail" />
+      </div>
+
+      <div class="input-group">
+        <div class="input-with-icon">
+          <input type="password" class="input-field" placeholder="Contraseña" id="signupPassword" />
+          <span class="eye-icon" onclick="togglePassword('signupPassword')"><i class="fa-solid fa-eye"></i></span>
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="terms" />
+        <label for="terms">Acepto términos y política de privacidad</label>
+      </div>
+
+      <button class="primary-btn" onclick="handleSignup()">Regístrate</button>
+
+      <p class="link-text">¿Ya tienes una cuenta? <a href="login.html">Inicia sesión</a></p>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Login</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="width:36px"></div>
+      <div class="time">Login</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="loginScreen">
+      <h1 class="welcome-title">Bienvenido/a</h1>
+      <p class="welcome-subtitle">Accede a métricas y simulaciones de ciberseguridad.</p>
+
+      <div class="social-buttons">
+        <button class="social-btn"><i class="fa-brands fa-google" aria-hidden="true"></i> Google</button>
+        <button class="social-btn"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> Facebook</button>
+      </div>
+
+      <div class="input-group">
+        <input type="email" class="input-field" placeholder="usuario@gmail.com" id="loginEmail" />
+      </div>
+
+      <div class="input-group">
+        <div class="input-with-icon">
+          <input type="password" class="input-field" placeholder="Contraseña" id="loginPassword" />
+          <span class="eye-icon" onclick="togglePassword('loginPassword')"><i class="fa-solid fa-eye"></i></span>
+        </div>
+      </div>
+
+      <button class="primary-btn" onclick="handleLogin()">Iniciar Sesión</button>
+
+      <p class="link-text">
+        <a href="recover.html">¿Olvidaste tu contraseña?</a><br />
+        ¿No tienes una cuenta? <a href="signup.html">Regístrate</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

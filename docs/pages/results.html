@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Resultados</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="time">Resultados</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="screen active" id="resultsScreen">
+      <div class="results-screen">
+        <div class="result-title"><i class="fa-solid fa-circle-check"></i> ¡Simulación Completada!</div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-value" id="finalScore">0%</div><div class="stat-label">Puntuación</div></div>
+          <div class="stat-card"><div class="stat-value" id="correctAnswers">0/0</div><div class="stat-label">Correctas</div></div>
+          <div class="stat-card"><div class="stat-value" id="timeSpent">0:00</div><div class="stat-label">Tiempo Total</div></div>
+          <div class="stat-card"><div class="stat-value" id="pointsEarned">0</div><div class="stat-label">Puntos</div></div>
+        </div>
+
+        <div id="feedbackSection" style="background: rgba(255,255,255,0.15); padding:20px; border-radius:12px; margin:20px 0;"></div>
+
+        <button class="primary-btn" onclick="finishSimulation()">Volver al inicio</button>
+        <button class="secondary-btn" style="margin-top:15px; color:#fff; border-color: rgba(255,255,255,0.5);"><i class="fa-solid fa-share-nodes"></i> Compartir Resultados</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>

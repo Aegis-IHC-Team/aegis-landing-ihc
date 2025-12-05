@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aegis — Dashboard</title>
+  <link rel="stylesheet" href="../assets/styles/demo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="width:36px"></div>
+      <div class="time">Panel</div>
+      <button class="back-btn" onclick="logout()" style="color: #ff4444; cursor: pointer;">
+        <i class="fa-solid fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <div class="screen active" id="dashboardScreen">
+      <div class="dashboard-header">
+        <div class="user-greeting">¡Hola, <span id="userName">Usuario</span>!</div>
+        <div class="user-subtitle">Bienvenido de vuelta</div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-box"><div class="stat-value" id="totalSims">5</div><div class="stat-label">Simulaciones</div></div>
+        <div class="stat-box"><div class="stat-value" id="completedSims">3</div><div class="stat-label">Completadas</div></div>
+        <div class="stat-box"><div class="stat-value" id="avgScore">78%</div><div class="stat-label">Promedio</div></div>
+      </div>
+
+      <div class="menu-grid">
+        <div class="menu-card" onclick="location.href='create-sim.html'">
+          <div class="menu-icon"><i class="fa-solid fa-plus"></i></div>
+          <div class="menu-title">Nueva Simulación</div>
+        </div>
+        <div class="menu-card" onclick="location.href='simulations.html'">
+          <div class="menu-icon"><i class="fa-solid fa-chart-simple"></i></div>
+          <div class="menu-title">Simulaciones</div>
+        </div>
+        <div class="menu-card" onclick="location.href='profile.html'">
+          <div class="menu-icon"><i class="fa-solid fa-user"></i></div>
+          <div class="menu-title">Mi Perfil</div>
+        </div>
+        <div class="menu-card" onclick="location.href='settings.html'">
+          <div class="menu-icon"><i class="fa-solid fa-cog"></i></div>
+          <div class="menu-title">Configuración</div>
+        </div>
+      </div>
+
+      <div class="section-title">Simulaciones recientes</div>
+      <div id="recentSimsList"></div>
+    </div>
+  </div>
+
+  <script src="../assets/scripts/demo.js"></script>
+</body>
+</html>
