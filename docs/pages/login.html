@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aegis — Login</title>
   <link rel="stylesheet" href="../assets/styles/demo.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -16,7 +19,16 @@
       <div style="width:36px"></div>
     </div>
 
-    <div class="screen active" id="loginScreen">
+    <div class="screen active" id="splashScreen">
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="app-name">Aegis</div>
+      </div>
+    </div>
+
+    <div class="screen" id="loginScreen">
       <h1 class="welcome-title">Bienvenido/a</h1>
       <p class="welcome-subtitle">Accede a métricas y simulaciones de ciberseguridad.</p>
 
@@ -26,25 +38,37 @@
       </div>
 
       <div class="input-group">
+        <label for="loginEmail" style="display: block; margin-bottom: 8px; font-size: 14px;">Correo electrónico</label>
         <input type="email" class="input-field" placeholder="usuario@gmail.com" id="loginEmail" />
       </div>
 
       <div class="input-group">
+        <label for="loginPassword" style="display: block; margin-bottom: 8px; font-size: 14px;">Contraseña</label>
         <div class="input-with-icon">
-          <input type="password" class="input-field" placeholder="Contraseña" id="loginPassword" />
-          <span class="eye-icon" onclick="togglePassword('loginPassword')"><i class="fa-solid fa-eye"></i></span>
+          <input type="password" class="input-field" placeholder="••••••••" id="loginPassword" />
+          <span class="eye-icon" onclick="togglePassword('loginPassword')"><i class="fa-regular fa-eye"></i></span>
         </div>
       </div>
 
-      <button class="primary-btn" onclick="handleLogin()">Iniciar Sesión</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="rememberMe" style="width: auto; margin: 0;" />
+          <label for="rememberMe" style="font-size: 14px; margin: 0;">Recordarme</label>
+        </div>
+        <a href="recover.html" style="font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">¿Olvidaste
+          tu contraseña?</a>
+      </div>
+
+      <button class="primary-btn" onclick="handleLogin()">
+        Iniciar Sesión
+      </button>
 
       <p class="link-text">
-        <a href="recover.html">¿Olvidaste tu contraseña?</a><br />
         ¿No tienes una cuenta? <a href="signup.html">Regístrate</a>
       </p>
     </div>
-  </div>
 
-  <script src="../assets/scripts/demo.js"></script>
+    <script src="../assets/scripts/demo.js"></script>
 </body>
+
 </html>

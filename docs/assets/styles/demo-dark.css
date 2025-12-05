@@ -1,0 +1,111 @@
+/* DARK MODE OVERRIDES - Softer colors to reduce eye strain */
+
+body.dark-mode {
+    --primary: #14b8a6;
+    --primary-light: #0f766e;
+    --primary-dark: #ccfbf1;
+    --secondary: #fb923c;
+    --dark: #f9fafb;
+    --light: #111827;
+    --gray: #9ca3af;
+    --border: #374151;
+    background: #0f172a;
+    color: #f9fafb;
+}
+
+body.dark-mode .container {
+    background: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .header {
+    background: #1f2937;
+    border-bottom-color: #374151;
+}
+
+body.dark-mode .back-btn {
+    color: #f9fafb;
+}
+
+body.dark-mode .back-btn:hover {
+    background: #111827;
+}
+
+body.dark-mode .social-btn {
+    background: #374151;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+body.dark-mode .social-btn:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .input-field {
+    background: #374151;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+body.dark-mode .input-field:focus {
+    border-color: #14b8a6;
+}
+
+body.dark-mode .stat-box,
+body.dark-mode .menu-card,
+body.dark-mode .sim-list-item,
+body.dark-mode .info-card,
+body.dark-mode .description-box,
+body.dark-mode .sim-preview,
+body.dark-mode .preview-card {
+    background: #374151;
+    border-color: #374151;
+}
+
+body.dark-mode .stat-box:hover,
+body.dark-mode .menu-card:hover,
+body.dark-mode .sim-list-item:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .profile-header {
+    background: rgba(20, 184, 166, 0.1);
+}
+
+body.dark-mode .info-card {
+    background: #374151;
+    border-left-color: #14b8a6;
+}
+
+/* Softer button colors - THIS IS THE KEY FIX */
+body.dark-mode .primary-btn {
+    background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+}
+
+body.dark-mode .primary-btn:hover {
+    background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+    box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3);
+}
+
+body.dark-mode .secondary-btn {
+    background: #374151;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+body.dark-mode .secondary-btn:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .danger-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+body.dark-mode .tab {
+    color: #6b7280;
+}
+
+body.dark-mode .tab.active {
+    color: #14b8a6;
+    border-bottom-color: #14b8a6;
+}

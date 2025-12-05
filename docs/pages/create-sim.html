@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aegis — Crear Simulación</title>
   <link rel="stylesheet" href="../assets/styles/demo.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -22,11 +25,21 @@
       <p class="welcome-subtitle">Selecciona una plantilla</p>
 
       <div class="sim-grid">
-        <div class="sim-card email" onclick="selectSimType('email')"><div class="sim-card-title"><i class="fa-solid fa-envelope"></i><br />Email<br />Malicioso</div></div>
-        <div class="sim-card link" onclick="selectSimType('link')"><div class="sim-card-title"><i class="fa-solid fa-link"></i><br />Link<br />Malicioso</div></div>
-        <div class="sim-card sms" onclick="selectSimType('sms')"><div class="sim-card-title"><i class="fa-solid fa-comments"></i><br />SMS<br />Phishing</div></div>
-        <div class="sim-card web" onclick="selectSimType('web')"><div class="sim-card-title"><i class="fa-solid fa-globe"></i><br />Sitio Web<br />Fraudulento</div></div>
-        <div class="sim-card sweep" onclick="selectSimType('sweep')"><div class="sim-card-title"><i class="fa-solid fa-bolt"></i><br />Sweep</div></div>
+        <div class="sim-card email" onclick="selectSimType('email')">
+          <div class="sim-card-title"><i class="fa-solid fa-envelope"></i><br />Email<br />Malicioso</div>
+        </div>
+        <div class="sim-card link" onclick="selectSimType('link')">
+          <div class="sim-card-title"><i class="fa-solid fa-link"></i><br />Link<br />Malicioso</div>
+        </div>
+        <div class="sim-card sms" onclick="selectSimType('sms')">
+          <div class="sim-card-title"><i class="fa-solid fa-comments"></i><br />SMS<br />Phishing</div>
+        </div>
+        <div class="sim-card web" onclick="selectSimType('web')">
+          <div class="sim-card-title"><i class="fa-solid fa-globe"></i><br />Sitio Web<br />Fraudulento</div>
+        </div>
+        <div class="sim-card sweep" onclick="selectSimType('sweep')">
+          <div class="sim-card-title"><i class="fa-solid fa-bolt"></i><br />Sweep</div>
+        </div>
       </div>
     </div>
 
@@ -36,17 +49,20 @@
       <p class="welcome-subtitle"><span id="selectedSimType">Tipo de simulación</span></p>
 
       <div class="input-group">
-        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Título de la Simulación</label>
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Título de la
+          Simulación</label>
         <input type="text" class="input-field" placeholder="Ej: Simulación de Phishing - Enero 2025" id="simTitle" />
       </div>
 
       <div class="input-group">
         <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Descripción</label>
-        <textarea class="input-field" placeholder="Describe el objetivo de la simulación" id="simDescription" style="resize: vertical; min-height: 80px;"></textarea>
+        <textarea class="input-field" placeholder="Describe el objetivo de la simulación" id="simDescription"
+          style="resize: vertical; min-height: 80px;"></textarea>
       </div>
 
       <div class="input-group">
-        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Dificultad: <span id="simDifficulty">3/5</span></label>
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 5px; display: block;">Dificultad: <span
+            id="simDifficulty">3/5</span></label>
       </div>
 
       <button class="primary-btn" onclick="goToAssignParticipants()">Continuar</button>
@@ -64,7 +80,8 @@
       </div>
 
       <div style="margin-top: 20px;">
-        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 10px; display: block;">Participantes agregados:</label>
+        <label style="font-size: 12px; opacity: 0.7; margin-bottom: 10px; display: block;">Participantes
+          agregados:</label>
         <div id="participantsList"></div>
       </div>
 
@@ -132,7 +149,8 @@
 
       <div class="preview-card">
         <div class="preview-label">Dificultad</div>
-        <div class="preview-value stars" id="previewDifficulty">★★★</div>
+        <div class="preview-value stars" id="previewDifficulty"><i class="fa-solid fa-star"></i><i
+            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
       </div>
 
       <div class="preview-card">
@@ -154,4 +172,5 @@
 
   <script src="../assets/scripts/demo.js"></script>
 </body>
+
 </html>

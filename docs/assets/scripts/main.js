@@ -1,8 +1,4 @@
-// main.js
-// Interacciones básicas para la landing de Aegis
-
 document.addEventListener("DOMContentLoaded", () => {
-    // ========== SMOOTH SCROLL PARA TODOS LOS LINKS CON # ==========
     const internalLinks = document.querySelectorAll('a[href^="#"]');
 
     internalLinks.forEach((link) => {
@@ -19,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // ========== NAVBAR: LINK ACTIVO SEGÚN SECCIÓN ==========
     const navLinks = document.querySelectorAll(".navbar__links a");
     const sections = Array.from(navLinks)
         .map((link) => {
@@ -36,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sections.forEach((section) => {
             const rect = section.getBoundingClientRect();
             const offsetTop = rect.top + scrollY;
-            if (scrollY + 120 >= offsetTop) {
+            if (scrollY + 100 >= offsetTop) {
                 currentSectionId = section.id;
             }
         });
@@ -44,9 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         navLinks.forEach((link) => {
             const linkId = link.getAttribute("href")?.slice(1);
             if (linkId && linkId === currentSectionId) {
-                link.classList.add("navbar__link--active");
+                link.style.color = "var(--primary)";
             } else {
-                link.classList.remove("navbar__link--active");
+                link.style.color = "";
             }
         });
     };
@@ -54,10 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setActiveNav();
     window.addEventListener("scroll", setActiveNav);
 
-    // ========== TILT CARD EN EL HERO ==========
     const heroCard = document.querySelector(".hero__card");
     if (heroCard) {
-        const maxRotation = 7; // grados
+        const maxRotation = 5;
 
         heroCard.addEventListener("mousemove", (e) => {
             const rect = heroCard.getBoundingClientRect();
@@ -66,15 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const rotateX = ((y - rect.height / 2) / rect.height) * maxRotation;
             const rotateY = ((x - rect.width / 2) / rect.width) * -maxRotation;
 
-            heroCard.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            heroCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
 
         heroCard.addEventListener("mouseleave", () => {
-            heroCard.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
+            heroCard.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
         });
     }
 
-    // ========== ANIMACIÓN DE APARICIÓN EN SCROLL ==========
     const revealEls = document.querySelectorAll(
         ".hero, .section, .team-card, .card"
     );
@@ -82,49 +75,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const onReveal = (entries, observer) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add("is-visible");
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0)";
                 observer.unobserve(entry.target);
             }
         });
     };
 
     const observer = new IntersectionObserver(onReveal, {
-        threshold: 0.2,
+        threshold: 0.15,
+        rootMargin: "0px 0px -50px 0px"
     });
 
-    revealEls.forEach((el) => observer.observe(el));
-
-    // ========== FORM DEMO: “FAKE SUBMIT” CON FEEDBACK ==========
-    const demoSection = document.getElementById("demo");
-    if (demoSection) {
-        const form = demoSection.querySelector("form.form");
-        if (form) {
-            form.addEventListener("submit", (e) => {
-                e.preventDefault();
-
-                const button = form.querySelector("button[type='submit']");
-                if (!button) return;
-
-                const originalHTML = button.innerHTML;
-                button.disabled = true;
-                button.innerHTML = "Enviando...";
-                button.classList.add("btn--sending");
-
-                setTimeout(() => {
-                    button.innerHTML = '<i class="fa-solid fa-circle-check"></i> Demo registrada';
-                    button.classList.remove("btn--sending");
-                    button.classList.add("btn--success");
-
-                    // limpiar campos
-                    form.reset();
-
-                    setTimeout(() => {
-                        button.innerHTML = originalHTML;
-                        button.disabled = false;
-                        button.classList.remove("btn--success");
-                    }, 2000);
-                }, 1000);
-            });
-        }
-    }
+    revealEls.forEach((el) => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(20px)";
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        observer.observe(el);
+    });
 });
