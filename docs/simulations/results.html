@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .results-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .results-header {
+            background: linear-gradient(135deg, var(--color-green) 0%, var(--color-cyan) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            color: var(--color-white);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .results-title {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .results-summary {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-md);
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .completion-slider {
+            margin: var(--spacing-lg) 0;
+        }
+
+        .slider-label {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo"><img src="../assets/images/logo_grande.png" alt="AEGIS"
+                    style="height: 40px; width: auto;"></a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link active">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link">Crear Simulación</a></li>
+                </ul>
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item"><i class="fas fa-user"></i><span>Mi
+                                Perfil</span></a>
+                        <a href="my-simulations.html" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Mis
+                                Resultados</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()"><i
+                                class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="results-container">
+        <!-- Results Header -->
+        <div class="results-header slide-up">
+            <div class="results-title">
+                <i class="fas fa-check-circle"></i> Simulación Completada
+            </div>
+            <div class="results-summary">
+                <div class="summary-item">
+                    <div class="summary-value" id="correctAnswers">0</div>
+                    <div class="summary-label">Respuestas Correctas</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="incorrectAnswers">0</div>
+                    <div class="summary-label">Respuestas Incorrectas</div>
+                </div>
+            </div>
+
+            <div class="completion-slider">
+                <div class="slider-label">
+                    <span id="completionPercent">0%</span> de Preguntas Correctas
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="completionBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Statistics -->
+        <div class="section-header">
+            <h2 class="section-title">Estadísticas Generales</h2>
+        </div>
+
+        <div class="stats-display">
+            <div class="stat-box slide-up">
+                <div class="stat-circle" style="--progress: 30%">
+                    <div class="stat-circle-value" id="precisionValue">0%</div>
+                </div>
+                <div class="stat-box-label">Precisión</div>
+            </div>
+
+            <div class="stat-box slide-up" style="animation-delay: 0.1s;">
+                <div class="stat-circle" style="--progress: 50%">
+                    <div class="stat-circle-value" id="timeValue">0:00</div>
+                </div>
+                <div class="stat-box-label">Tiempo Total</div>
+            </div>
+
+            <div class="stat-box slide-up" style="animation-delay: 0.2s;">
+                <div class="stat-circle" style="--progress: 40%">
+                    <div class="stat-circle-value" id="avgTimeValue">0s</div>
+                </div>
+                <div class="stat-box-label">Tiempo x Pregunta</div>
+            </div>
+
+            <div class="stat-box slide-up" style="animation-delay: 0.3s;">
+                <div class="stat-circle" style="--progress: 75%">
+                    <div class="stat-circle-value" id="pointsValue">0</div>
+                </div>
+                <div class="stat-box-label">Puntos</div>
+            </div>
+        </div>
+
+        <!-- Performance by Category -->
+        <div class="section-header mt-lg">
+            <h2 class="section-title">Desempeño Por Categoría</h2>
+        </div>
+
+        <div class="card slide-up" id="categoriesContainer">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-md mt-lg">
+            <button class="btn btn-outline flex-1" onclick="window.location.href='my-simulations.html'">
+                <i class="fas fa-arrow-left"></i> Mis Simulaciones
+            </button>
+            <button class="btn btn-primary flex-1" onclick="Utils.showToast('Funcionalidad en desarrollo', 'info')">
+                <i class="fas fa-share-alt"></i> Compartir Resultados
+            </button>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script src="../assets/scripts/simulation-executor.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        // Update user header with profile info
+        const currentUser = StorageManager.getCurrentUser();
+        if (currentUser) {
+            const avatarElement = document.getElementById('headerAvatar');
+            if (avatarElement && currentUser.avatar) {
+                avatarElement.src = currentUser.avatar;
+            }
+            const userNameElement = document.getElementById('headerUserName');
+            if (userNameElement && currentUser.username) {
+                userNameElement.textContent = currentUser.username;
+            }
+        }
+
+        // Get result data
+        const params = new URLSearchParams(window.location.search);
+        const simulationId = params.get('id');
+
+        let resultData = sessionStorage.getItem('aegis_result_data');
+        if (resultData) {
+            resultData = JSON.parse(resultData);
+            sessionStorage.removeItem('aegis_result_data');
+        } else if (simulationId) {
+            // Try to get from storage
+            const results = StorageManager.getResultsBySimulation(simulationId);
+            if (results.length > 0) {
+                resultData = results[results.length - 1]; // Get latest result
+            }
+        }
+
+        if (!resultData) {
+            Utils.showToast('No se encontraron resultados', 'error');
+            setTimeout(() => window.location.href = 'my-simulations.html', 1500);
+        } else {
+            displayResults(resultData);
+        }
+
+        function displayResults(data) {
+            // Summary
+            document.getElementById('correctAnswers').textContent = data.correctAnswers;
+            document.getElementById('incorrectAnswers').textContent = data.incorrectAnswers;
+            document.getElementById('completionPercent').textContent = data.precision + '%';
+            document.getElementById('completionBar').style.width = data.precision + '%';
+
+            // General stats
+            document.getElementById('precisionValue').textContent = data.precision + '%';
+            document.getElementById('timeValue').textContent = Utils.formatTime(data.totalTime);
+            document.getElementById('avgTimeValue').textContent = data.timePerQuestion + 's';
+            document.getElementById('pointsValue').textContent = data.points;
+
+            // Update circles
+            const precisionProgress = data.precision;
+            const timeProgress = Math.min((data.totalTime / 600) * 100, 100); // Max 10 min
+            const avgTimeProgress = Math.min((data.timePerQuestion / 60) * 100, 100); // Max 60s
+            const pointsProgress = Math.min((data.points / 1000) * 100, 100);
+
+            document.querySelectorAll('.stat-circle')[0].style.setProperty('--progress', precisionProgress + '%');
+            document.querySelectorAll('.stat-circle')[1].style.setProperty('--progress', timeProgress + '%');
+            document.querySelectorAll('.stat-circle')[2].style.setProperty('--progress', avgTimeProgress + '%');
+            document.querySelectorAll('.stat-circle')[3].style.setProperty('--progress', pointsProgress + '%');
+
+            // Categories
+            const categoriesContainer = document.getElementById('categoriesContainer');
+            if (data.categories) {
+                Object.entries(data.categories).forEach(([category, score]) => {
+                    const categoryHTML = `
+            <div class="preview-row">
+              <span class="preview-label">${category}</span>
+              <div style="flex: 1; margin: 0 16px;">
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" style="width: ${score}%"></div>
+                </div>
+              </div>
+              <span class="preview-value" style="min-width: 50px;">${score}%</span>
+            </div>
+          `;
+                    categoriesContainer.innerHTML += categoryHTML;
+                });
+            }
+        }
+
+        function toggleMobileMenu() { document.getElementById('headerNav').classList.toggle('show'); }
+        function toggleUserDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => window.location.href = '../login.html', 500);
+        }
+    </script>
+</body>
+
+</html>
