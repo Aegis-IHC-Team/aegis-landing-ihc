@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - AEGIS</title>
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <link rel="stylesheet" href="assets/styles/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card fade-in">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="assets/images/logo_aegis.png" alt="AEGIS" style="height: 60px; width: auto;">
+                </div>
+                <h1 class="auth-title">Crea una nueva cuenta</h1>
+                <p class="auth-subtitle">¿Listo para comenzar a aprender y cuidarte en línea? Regístrate y accede a
+                    diversos cursos para aprender todo lo relativo al riesgo en Internet</p>
+            </div>
+
+            <div class="auth-social">
+                <button class="btn-google" onclick="Utils.showToast('Funcionalidad en desarrollo', 'info')">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button class="btn-facebook" onclick="Utils.showToast('Funcionalidad en desarrollo', 'info')">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </button>
+            </div>
+
+            <div class="auth-divider">
+                <span>o</span>
+            </div>
+
+            <form class="auth-form" id="registerForm">
+                <div class="form-group-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" class="form-input" id="name" name="name" placeholder="Nombre" required
+                        autocomplete="given-name">
+                </div>
+
+                <div class="form-group-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" class="form-input" id="email" name="email" placeholder="Email" required
+                        autocomplete="email">
+                </div>
+
+                <div class="form-group-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" class="form-input" id="password" name="password" placeholder="Contraseña"
+                        required autocomplete="new-password">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', 'toggleIcon1')">
+                        <i class="fas fa-eye" id="toggleIcon1"></i>
+                    </button>
+                </div>
+
+                <div class="form-checkbox-group" style="display: block; margin-bottom: 20px;">
+                    <label class="checkbox-label" style="font-size: 0.85rem;">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <span>Acepto los términos de servicio y política de privacidad</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Regístrate
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                ¿Tienes una cuenta? <a href="login.html" class="auth-link">Inicia sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/scripts/storage-manager.js"></script>
+    <script src="assets/scripts/utilities.js"></script>
+    <script src="assets/scripts/auth.js"></script>
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - AEGIS</title>
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <link rel="stylesheet" href="assets/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="home.html" class="header-logo">
+                <img src="assets/images/logo_aegis.png" alt="AEGIS Logo" class="logo-icon"
+                    style="height: 40px; width: auto;">
+                <img src="assets/images/logo_grande.png" alt="AEGIS" class="logo-full"
+                    style="height: 40px; width: auto; display: none;">
+            </a>
+
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="home.html" class="nav-link active">Inicio</a></li>
+                    <li><a href="simulations/my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="simulations/create-template.html" class="nav-link">Crear Simulación</a></li>
+                </ul>
+
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <a href="#" class="dropdown-item"
+                            onclick="event.preventDefault(); window.location.href='simulations/my-simulations.html'">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Mis Resultados</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <section class="welcome-section slide-up">
+            <div class="welcome-content">
+                <h1 class="welcome-title">¡Bienvenido de nuevo, <span id="welcomeUserName">Usuario</span>!</h1>
+                <p class="welcome-subtitle">Continúa aprendiendo y mejorando tus habilidades en ciberseguridad</p>
+            </div>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card slide-up" style="animation-delay: 0.1s;">
+                <div class="stat-icon blue">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalSimulations">0</h3>
+                    <p>Simulaciones Totales</p>
+                </div>
+            </div>
+
+            <div class="stat-card slide-up" style="animation-delay: 0.2s;">
+                <div class="stat-icon green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="completedSimulations">0</h3>
+                    <p>Completadas</p>
+                </div>
+            </div>
+
+            <div class="stat-card slide-up" style="animation-delay: 0.3s;">
+                <div class="stat-icon cyan">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalTime">0h</h3>
+                    <p>Tiempo Total</p>
+                </div>
+            </div>
+
+            <div class="stat-card slide-up" style="animation-delay: 0.4s;">
+                <div class="stat-icon purple">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="avgPrecision">0%</h3>
+                    <p>Precisión Promedio</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="section-header">
+            <h2 class="section-title">Acciones Rápidas</h2>
+        </section>
+
+        <div class="actions-grid">
+            <a href="simulations/create-template.html" class="action-card slide-up" style="animation-delay: 0.1s;">
+                <div class="action-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3 class="action-title">Crear Nueva Simulación</h3>
+                <p class="action-description">Selecciona una plantilla y personaliza tu simulación de ciberseguridad</p>
+            </a>
+
+            <a href="simulations/my-simulations.html" class="action-card slide-up" style="animation-delay: 0.2s;">
+                <div class="action-icon">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <h3 class="action-title">Mis Simulaciones</h3>
+                <p class="action-description">Revisa el progreso y resultados de tus simulaciones</p>
+            </a>
+
+            <a href="simulations/my-simulations.html" class="action-card slide-up" style="animation-delay: 0.3s;">
+                <div class="action-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 class="action-title">Ver Estadísticas</h3>
+                <p class="action-description">Analiza tu desempeño y áreas de mejora</p>
+            </a>
+        </div>
+
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Actividad Reciente</h2>
+                <a href="simulations/my-simulations.html" class="section-link">
+                    Ver Todo <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="activity-list slide-up" id="activityList">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No hay actividad reciente</h3>
+                    <p>Comienza creando tu primera simulación</p>
+                    <a href="simulations/create-template.html" class="btn btn-primary mt-md">
+                        <i class="fas fa-plus"></i> Crear Simulación
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/scripts/storage-manager.js"></script>
+    <script src="assets/scripts/utilities.js"></script>
+    <script src="assets/scripts/navigation.js"></script>
+    <script>
+        if (!Utils.redirectIfNotLoggedIn()) {
+        }
+
+        const currentUser = StorageManager.getCurrentUser();
+        if (currentUser) {
+            document.getElementById('welcomeUserName').textContent = currentUser.name || 'Usuario';
+            document.getElementById('headerUserName').textContent = currentUser.name || 'Usuario';
+
+            if (currentUser.avatar) {
+                document.getElementById('headerAvatar').src = currentUser.avatar;
+            }
+        }
+
+        const stats = StorageManager.getStatistics();
+        document.getElementById('totalSimulations').textContent = stats.totalSimulations;
+        document.getElementById('completedSimulations').textContent = stats.completedSimulations;
+
+        const hours = Math.floor(stats.totalTime / 3600);
+        const minutes = Math.floor((stats.totalTime % 3600) / 60);
+        document.getElementById('totalTime').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+        document.getElementById('avgPrecision').textContent = `${stats.avgPrecision}%`;
+
+        const simulations = StorageManager.getSimulations();
+        const activityList = document.getElementById('activityList');
+
+        if (simulations.length > 0) {
+            activityList.innerHTML = '';
+
+            simulations.slice(0, 5).forEach(sim => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+
+                let iconClass = 'blue';
+                let badgeClass = 'pending';
+                let badgeText = 'Programada';
+
+                if (sim.status === 'completed') {
+                    iconClass = 'green';
+                    badgeClass = 'success';
+                    badgeText = 'Completada';
+                } else if (sim.status === 'in-progress') {
+                    iconClass = 'cyan';
+                    badgeClass = 'info';
+                    badgeText = 'En Progreso';
+                }
+
+                activityItem.innerHTML = `
+          <div class="activity-icon stat-icon ${iconClass}">
+            <i class="fas fa-laptop-code"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">${sim.name}</div>
+            <div class="activity-time">${Utils.getRelativeTime(sim.createdAt)}</div>
+          </div>
+          <span class="activity-badge ${badgeClass}">${badgeText}</span>
+        `;
+
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        function toggleMobileMenu() {
+            const nav = document.getElementById('headerNav');
+            nav.classList.toggle('show');
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function (e) {
+            const userMenu = document.querySelector('.header-user');
+            const dropdown = document.getElementById('userDropdown');
+
+            if (dropdown && !userMenu.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function logout() {
+            StorageManager.logout();
+
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

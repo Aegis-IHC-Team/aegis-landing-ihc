@@ -1,0 +1,112 @@
+/* ========================================
+    AEGIS - Profile Page Styles
+   ======================================== */
+
+.profile-page {
+    min-height: 100vh;
+    background: #F5F7FA;
+}
+
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.profile-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: var(--gradient-bg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    position: relative;
+}
+
+.profile-avatar-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--spacing-md);
+}
+
+.profile-avatar-large {
+    width: 150px;
+    height: 150px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 5px solid var(--color-white);
+    box-shadow: var(--shadow-lg);
+}
+
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--color-green);
+    color: var(--color-white);
+    border: 3px solid var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.avatar-upload-btn:hover {
+    background: var(--color-cyan);
+    transform: scale(1.1);
+}
+
+.avatar-upload-btn input {
+    display: none;
+}
+
+.profile-name {
+    color: var(--color-white);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.profile-email {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.profile-body {
+    padding: var(--spacing-xl);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--colorstradnight);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid #E0E0E0;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-avatar-large {
+        width: 120px;
+        height: 120px;
+    }
+}

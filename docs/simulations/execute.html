@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejecutar Simulación - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1BC467 0%, #1CB9B9 100%);
+            min-height: 100vh;
+            padding: var(--spacing-md);
+        }
+
+        .execution-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .execution-header {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 2px solid #E0E0E0;
+            background: var(--color-white);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+
+        .tab.active {
+            background: var(--color-green);
+            color: var(--color-white);
+            border-color: var(--color-green);
+        }
+
+        .header-counter {
+            text-align: right;
+        }
+
+        .counter-label {
+            font-size: 0.8rem;
+            color: #757575;
+        }
+
+        .counter-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-midnight);
+        }
+
+        .progress-slider {
+            margin: var(--spacing-sm) 0;
+        }
+
+        .scenario-card {
+            background: rgba(255, 120, 120, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            border-left: 6px solid #FC8181;
+        }
+
+        .scenario-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-midnight);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .scenario-content {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-sm);
+        }
+
+        .question-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-midnight);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .actions-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .actions-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .action-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            border: 2px solid #E0E0E0;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .action-option:hover {
+            border-color: var(--color-blue);
+            background: rgba(35, 113, 215, 0.05);
+        }
+
+        .action-option.selected {
+            border-color: var(--color-green);
+            background: rgba(27, 196, 103, 0.05);
+        }
+
+        .radio-indicator {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #999;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            transition: all var(--transition-fast);
+            background: white;
+        }
+
+        .action-option:hover .radio-indicator {
+            border-color: var(--color-blue);
+        }
+
+        .action-option.selected .radio-indicator {
+            border-color: var(--color-green);
+            background: var(--color-green);
+        }
+
+        .action-option.selected .radio-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .action-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="execution-container">
+        <!-- Header -->
+        <div class="execution-header slide-up">
+            <div style="flex: 1;">
+                <h2 class="m-0" id="simulationTitle">Email Falso</h2>
+                <div class="header-tabs mt-sm" id="headerTabs">
+                    <div class="tab"
+                        style="background: rgba(27, 196, 103, 0.15); border-color: var(--color-green); color: var(--color-green);">
+                        <i class="fas fa-check"></i> <span id="correctCount">0</span> Respuestas Correctas
+                    </div>
+                    <div class="tab"
+                        style="background: rgba(255, 87, 87, 0.15); border-color: #FF5757; color: #FF5757;">
+                        <i class="fas fa-times"></i> <span id="incorrectCount">0</span> Respuestas Incorrectas
+                    </div>
+                </div>
+            </div>
+            <div class="header-counter">
+                <div class="counter-value" style="margin-bottom: 8px;"><span id="currentNum">1</span> de <span
+                        id="totalNum">10</span> Preguntas</div>
+                <div class="progress-slider">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBar" style="width: 10%"></div>
+                    </div>
+                    <div class="counter-label mt-xs" style="text-align: center;"><span id="progressPercent">30%</span>
+                        Faltante</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scenario Card -->
+        <div class="scenario-card slide-up" style="animation-delay: 0.1s;">
+            <div class="scenario-title" id="scenarioTitle">
+                <i class="fas fa-exclamation-triangle"></i> Banco Nacional - seguridad@banconacional.com
+            </div>
+            <div class="scenario-content">
+                <div class="question-text" id="questionContent">
+                    Asunto: Verificación urgente de su cuenta
+                    <br><br>
+                    Estimado cliente,
+                    <br><br>
+                    Hemos detectado actividad sospechosa en su cuenta...
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="actions-card slide-up" style="animation-delay: 0.2s;">
+            <h3 class="actions-title">¿Cómo responderías?</h3>
+
+            <div class="action-option" data-action="hacer-click" onclick="selectAction(this, 'hacer-click')">
+                <div class="radio-indicator"></div>
+                <div>Hacer clic en el enlace</div>
+            </div>
+
+            <div class="action-option" data-action="responder" onclick="selectAction(this, 'responder')">
+                <div class="radio-indicator"></div>
+                <div>Responder al email</div>
+            </div>
+
+            <div class="action-option" data-action="reportar" onclick="selectAction(this, 'reportar')">
+                <div class="radio-indicator"></div>
+                <div>Reportar como spam</div>
+            </div>
+
+            <div class="action-controls">
+                <button class="btn btn-outline" onclick="showHint()">
+                    <i class="fas fa-lightbulb"></i> Pista
+                </button>
+                <button class="btn btn-primary btn-full" id="analyzeBtn" onclick="analyzeAnswer()" disabled>
+                    Analizar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script src="../assets/scripts/simulation-executor.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        const simulationId = sessionStorage.getItem('aegis_current_simulation');
+        if (!simulationId) {
+            window.location.href = 'my-simulations.html';
+        }
+
+        const execData = SimulationExecutor.init(simulationId);
+        if (!execData) {
+            Utils.showToast('Simulación no encontrada', 'error');
+            setTimeout(() => window.location.href = 'my-simulations.html', 1500);
+        }
+
+        const { simulation, template, questions, totalQuestions } = execData;
+        let selectedAnswer = null;
+
+        document.getElementById('simulationTitle').textContent = simulation.name;
+        document.getElementById('totalNum').textContent = totalQuestions;
+
+        loadQuestion();
+
+        function loadQuestion() {
+            const question = SimulationExecutor.getCurrentQuestion(questions);
+            const currentIndex = SimulationExecutor.currentQuestionIndex;
+
+            // Update progress
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const progress = ((currentIndex + 1) / totalQuestions) * 100;
+            const remaining = 100 - Math.round(progress);
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = remaining + '%';
+
+            // Update correct/incorrect counts
+            const correctCount = SimulationExecutor.answers.filter((answer, idx) => {
+                return questions[idx] && answer === questions[idx].correctAnswer;
+            }).length;
+            const incorrectCount = SimulationExecutor.answers.length - correctCount;
+
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('incorrectCount').textContent = incorrectCount;
+
+            // Display question
+            if (question.type === 'email') {
+                document.getElementById('scenarioTitle').innerHTML =
+                    `<i class="fas fa-envelope"></i> ${question.sender}`;
+                document.getElementById('questionContent').innerHTML =
+                    `<strong>Asunto:</strong> ${question.subject}<br><br>${question.body.replace(/\\n/g, '<br>')}`;
+                updateActionButtons([
+                    { action: 'hacer-click', label: 'Hacer clic en el enlace' },
+                    { action: 'responder', label: 'Responder al email' },
+                    { action: 'reportar', label: 'Reportar como spam' }
+                ]);
+            } else if (question.type === 'link') {
+                document.getElementById('scenarioTitle').innerHTML =
+                    `<i class="fas fa-link"></i> Enlace Recibido`;
+                document.getElementById('questionContent').innerHTML =
+                    `<strong>URL:</strong> ${question.url}<br><br>${question.context}`;
+                updateActionButtons([
+                    { action: 'hacer-click', label: 'Hacer clic en el enlace' },
+                    { action: 'no-click', label: 'No hacer clic' },
+                    { action: 'verificar', label: 'Verificar antes de hacer clic' }
+                ]);
+            } else if (question.type === 'sms') {
+                document.getElementById('scenarioTitle').innerHTML =
+                    `<i class="fas fa-sms"></i> SMS de: ${question.sender}`;
+                document.getElementById('questionContent').innerHTML =
+                    `<strong>Mensaje:</strong><br><br>${question.message}`;
+                updateActionButtons([
+                    { action: 'responder', label: 'Responder al mensaje' },
+                    { action: 'ignorar', label: 'Ignorar mensaje' },
+                    { action: 'llamar-empresa', label: 'Llamar a la empresa directamente' }
+                ]);
+            } else if (question.type === 'website') {
+                document.getElementById('scenarioTitle').innerHTML =
+                    `<i class="fas fa-globe"></i> Sitio Web`;
+                document.getElementById('questionContent').innerHTML =
+                    `<strong>URL:</strong> ${question.url}<br><br>${question.description}`;
+                updateActionButtons([
+                    { action: 'continuar', label: 'Continuar navegando' },
+                    { action: 'salir', label: 'Salir del sitio' },
+                    { action: 'verificar-url', label: 'Verificar URL primero' }
+                ]);
+            } else if (question.type === 'scenario') {
+                document.getElementById('scenarioTitle').innerHTML =
+                    `<i class="fas fa-question-circle"></i> Escenario`;
+                document.getElementById('questionContent').innerHTML =
+                    `<strong>${question.situation}</strong><br><br>${question.question || '¿Qué deberías hacer?'}`;
+
+                // Determine action buttons based on simulation type
+                const template = simulation.template;
+                if (template === 'better-sleep') {
+                    updateActionButtons([
+                        { action: 'buena-practica', label: 'Buena práctica' },
+                        { action: 'mala-practica', label: 'Mala práctica' },
+                        { action: 'depende', label: 'Depende del contexto' }
+                    ]);
+                } else if (template === 'redes-sociales') {
+                    updateActionButtons([
+                        { action: 'aceptar', label: 'Aceptar/Continuar' },
+                        { action: 'rechazar', label: 'Rechazar/Evitar' },
+                        { action: 'revisar-perfil', label: 'Revisar más información' }
+                    ]);
+                }
+            }
+
+            // Reset selection
+            selectedAnswer = null;
+            document.querySelectorAll('.action-option.selected').forEach(el => el.classList.remove('selected'));
+            document.getElementById('analyzeBtn').disabled = true;
+        }
+
+        function updateActionButtons(actions) {
+            const actionsCard = document.querySelector('.actions-card');
+            const actionsTitle = actionsCard.querySelector('.actions-title');
+            const actionControls = actionsCard.querySelector('.action-controls');
+
+            // Clear existing options
+            const existingOptions = actionsCard.querySelectorAll('.action-option');
+            existingOptions.forEach(el => el.remove());
+
+            // Create new options
+            actions.forEach(({ action, label }) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'action-option';
+                optionDiv.setAttribute('data-action', action);
+                optionDiv.onclick = function () { selectAction(this, action); };
+                optionDiv.innerHTML = `
+                    <div class="radio-indicator"></div>
+                    <div>${label}</div>
+                `;
+                actionsCard.insertBefore(optionDiv, actionControls);
+            });
+        }
+
+        function selectAction(element, action) {
+            document.querySelectorAll('.action-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedAnswer = action;
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        function showHint() {
+            const question = SimulationExecutor.getCurrentQuestion(questions);
+            const hint = SimulationExecutor.getHint(question);
+            Utils.showToast(hint.text, 'info', 5000);
+        }
+
+        function analyzeAnswer() {
+            if (!selectedAnswer) return;
+
+            const result = SimulationExecutor.recordAnswer(selectedAnswer, questions);
+
+            if (result.isComplete) {
+                // Simulation complete - go to results
+                const completeResult = SimulationExecutor.complete(questions);
+                sessionStorage.setItem('aegis_result_data', JSON.stringify(completeResult.data));
+                window.location.href = 'results.html?id=' + simulation.id;
+            } else {
+                // Next question
+                loadQuestion();
+            }
+        }
+    </script>
+</body>
+
+</html>

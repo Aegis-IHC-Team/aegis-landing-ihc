@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Simulaciones - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo"><img src="../assets/images/logo_grande.png" alt="AEGIS"
+                    style="height: 40px; width: auto;"></a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link active">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link">Crear Simulación</a></li>
+                </ul>
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item"><i class="fas fa-user"></i><span>Mi
+                                Perfil</span></a>
+                        <a href="my-simulations.html" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Mis
+                                Resultados</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()"><i
+                                class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="section-header">
+            <h2 class="section-title">Mis Simulaciones</h2>
+            <a href="create-template.html" class="section-link">
+                <i class="fas fa-plus"></i> Crear Nueva
+            </a>
+        </div>
+
+        <!-- Statistics Overview -->
+        <div class="stat-card mb-lg slide-up">
+            <div class="stat-icon blue">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="totalTimeDisplay">0min / 0.0h</h3>
+                <p>Tiempo Total Invertido</p>
+            </div>
+        </div>
+
+        <!-- Simulations Grid -->
+        <div class="simulations-grid" id="simulationsGrid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>No tienes simulaciones</h3>
+            <p>Comienza creando tu primera simulación de ciberseguridad</p>
+            <a href="create-template.html" class="btn btn-primary mt-md">
+                <i class="fas fa-plus"></i> Crear Simulación
+            </a>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        const currentUser = StorageManager.getCurrentUser();
+        if (currentUser) {
+            document.getElementById('headerUserName').textContent = currentUser.name || 'Usuario';
+            if (currentUser.avatar) document.getElementById('headerAvatar').src = currentUser.avatar;
+        }
+
+        // Load simulations
+        const simulations = StorageManager.getSimulations();
+        const simulationsGrid = document.getElementById('simulationsGrid');
+        const emptyState = document.getElementById('emptyState');
+
+        if (simulations.length === 0) {
+            simulationsGrid.style.display = 'none';
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+
+            const colors = ['blue', 'red', 'green'];
+
+            simulations.forEach((sim, index) => {
+                const template = SimulationManager.getTemplate(sim.template);
+                const color = colors[index % colors.length];
+
+                const card = document.createElement('div');
+                card.className = `simulation-card ${color} slide-up`;
+                card.style.animationDelay = `${index * 0.1}s`;
+
+                card.innerHTML = `
+          <div class="simulation-header">
+            <div class="simulation-info">
+              <h3 class="simulation-name">${sim.name}</h3>
+              <p class="simulation-template">${template ? template.name : sim.template}</p>
+            </div>
+            <button class="simulation-play-btn" onclick="startSimulation('${sim.id}')">
+              <i class="fas fa-play"></i>
+            </button>
+          </div>
+          
+          <div class="simulation-progress">
+            <div class="progress-label">
+              <span>Completado</span>
+              <strong>${sim.progress || 0}%</strong>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: ${sim.progress || 0}%"></div>
+            </div>
+          </div>
+        `;
+
+                simulationsGrid.appendChild(card);
+            });
+        }
+
+        // Calculate total time
+        const stats = StorageManager.getStatistics();
+        const totalMinutes = Math.floor(stats.totalTime / 60);
+        const totalHours = (stats.totalTime / 3600).toFixed(1);
+        document.getElementById('totalTimeDisplay').textContent = `${totalMinutes}min / ${totalHours}h`;
+
+        function startSimulation(id) {
+            const sim = StorageManager.getSimulation(id);
+
+            if (sim.status === 'completed') {
+                // Go to results
+                window.location.href = `results.html?id=${id}`;
+            } else {
+                // Start simulation
+                sessionStorage.setItem('aegis_current_simulation', id);
+                window.location.href = 'execute.html';
+            }
+        }
+
+        function toggleMobileMenu() { document.getElementById('headerNav').classList.toggle('show'); }
+        function toggleUserDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => window.location.href = '../login.html', 500);
+        }
+    </script>
+</body>
+
+</html>

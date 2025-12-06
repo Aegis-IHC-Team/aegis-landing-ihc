@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Participantes - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo"><img src="../assets/images/logo_grande.png" alt="AEGIS"
+                    style="height: 40px; width: auto;"></a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link active">Crear Simulación</a></li>
+                </ul>
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item"><i class="fas fa-user"></i><span>Mi
+                                Perfil</span></a>
+                        <a href="my-simulations.html" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Mis
+                                Resultados</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()"><i
+                                class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="wizard-container">
+            <div class="wizard-card slide-up">
+                <button class="btn-back" onclick="window.location.href='customize.html'"
+                    style="position: absolute; top: 20px; left: 20px;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="wizard-header">
+                    <h1 class="wizard-title">Asignar participantes</h1>
+                    <p class="wizard-subtitle">Buscar usuarios...</p>
+                </div>
+
+                <form id="participantForm">
+                    <div class="form-group">
+                        <label class="form-label">Ingrese correo/persona a agregar</label>
+                        <div class="flex gap-sm">
+                            <input type="text" class="form-input" id="participantInput" placeholder="Buscar usuarios..."
+                                style="flex: 1;">
+                            <button type="button" class="btn btn-primary" onclick="addParticipant()">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Participantes seleccionados (<span
+                                id="participantCount">0</span>)</label>
+                        <div id="participantsList"
+                            style="min-height: 100px; border: 2px dashed #E0E0E0; border-radius: 8px; padding: 16px;">
+                            <p class="text-muted text-center" id="emptyMessage">No hay participantes agregados</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="assignTeam">
+                            <span>Asignar por equipos</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-md mt-lg">
+                        <button type="submit" class="btn btn-primary btn-full">Siguiente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        const workflowState = SimulationManager.loadWorkflowState();
+        if (!workflowState.template || !workflowState.name) {
+            window.location.href = 'create-template.html';
+        }
+
+        let participants = workflowState.participants || [];
+        updateParticipantsList();
+
+        function addParticipant() {
+            const input = document.getElementById('participantInput');
+            const email = input.value.trim();
+
+            if (!email) {
+                Utils.showToast('Ingresa un correo', 'warning');
+                return;
+            }
+
+            if (!Utils.validateEmail(email)) {
+                Utils.showToast('Correo inválido', 'error');
+                return;
+            }
+
+            if (participants.includes(email)) {
+                Utils.showToast('Este participante ya fue agregado', 'info');
+                return;
+            }
+
+            participants.push(email);
+            updateParticipantsList();
+            input.value = '';
+            Utils.showToast('Participante agregado', 'success');
+        }
+
+        function removeParticipant(email) {
+            participants = participants.filter(p => p !== email);
+            updateParticipantsList();
+            Utils.showToast('Participante eliminado', 'info');
+        }
+
+        function updateParticipantsList() {
+            const list = document.getElementById('participantsList');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const count = document.getElementById('participantCount');
+
+            count.textContent = participants.length;
+
+            if (participants.length === 0) {
+                if (!emptyMessage) {
+                    list.innerHTML = '<p class="text-muted text-center" id="emptyMessage">No hay participantes agregados</p>';
+                }
+            } else {
+                if (emptyMessage) emptyMessage.remove();
+                list.innerHTML = participants.map(p => `
+          <div class="participant-badge">
+            <i class="fas fa-user"></i>
+            <span>${p}</span>
+            <button type="button" class="remove-btn" onclick="removeParticipant('${p}')">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `).join('');
+            }
+        }
+
+        document.getElementById('participantForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            workflowState.participants = participants;
+            SimulationManager.saveWorkflowState(workflowState);
+            window.location.href = 'schedule.html';
+        });
+
+        function toggleMobileMenu() { document.getElementById('headerNav').classList.toggle('show'); }
+        function toggleUserDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>
