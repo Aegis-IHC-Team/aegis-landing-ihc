@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - AEGIS</title>
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <link rel="stylesheet" href="assets/styles/dashboard.css">
+    <link rel="stylesheet" href="assets/styles/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="profile-page">
+    <!-- Header Navigation -->
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="home.html" class="header-logo">
+                <img src="assets/images/logo_grande.png" alt="AEGIS" style="height: 40px; width: auto;">
+            </a>
+
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="simulations/my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="simulations/create-template.html" class="nav-link">Crear Simulación</a></li>
+                </ul>
+
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <a href="simulations/my-simulations.html" class="dropdown-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Mis Resultados</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="profile-container">
+        <div class="profile-card slide-up">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="Avatar"
+                        class="profile-avatar-large" id="profileAvatar">
+                    <label class="avatar-upload-btn" title="Cambiar foto">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" accept="image/*" id="avatarInput">
+                    </label>
+                </div>
+                <h1 class="profile-name" id="profileName">Usuario</h1>
+                <p class="profile-email" id="profileEmail">usuario@ejemplo.com</p>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="profile-body">
+                <form id="profileForm">
+                    <!-- Personal Information -->
+                    <h2 class="form-section-title">Información Personal</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-input" id="firstName" name="firstName" placeholder="Nombre"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Apellidos</label>
+                            <input type="text" class="form-input" id="lastName" name="lastName" placeholder="Apellidos">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="email" name="email" placeholder="usuario@ejemplo.com"
+                            required readonly style="background: #F5F5F5;">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-input" id="birthDate" name="birthDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Número Telefónico</label>
+                            <input type="tel" class="form-input" id="phone" name="phone" placeholder="+51 999 777 555">
+                        </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <h2 class="form-section-title mt-lg">Cambiar Contraseña</h2>
+
+                    <div class="form-group">
+                        <label class="form-label">Contraseña Actual</label>
+                        <input type="password" class="form-input" id="currentPassword" placeholder="••••••••">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" class="form-input" id="newPassword" placeholder="••••••••">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-md mt-lg">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='home.html'">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/scripts/storage-manager.js"></script>
+    <script src="assets/scripts/utilities.js"></script>
+    <script src="assets/scripts/navigation.js"></script>
+    <script src="assets/scripts/profile-manager.js"></script>
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const nav = document.getElementById('headerNav');
+            nav.classList.toggle('show');
+        }
+
+        // User dropdown toggle
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Logout function
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

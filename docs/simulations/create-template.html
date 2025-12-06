@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Simulación - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <!-- Header Navigation -->
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo">
+                <img src="../assets/images/logo_grande.png" alt="AEGIS" style="height: 40px; width: auto;">
+            </a>
+
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link active">Crear Simulación</a></li>
+                </ul>
+
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <a href="my-simulations.html" class="dropdown-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Mis Resultados</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="wizard-container">
+            <div class="wizard-card slide-up">
+                <button class="btn-back" onclick="window.location.href='../home.html'"
+                    style="position: absolute; top: 20px; left: 20px;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="wizard-header">
+                    <h1 class="wizard-title">Crear una simulación</h1>
+                    <p class="wizard-subtitle">Selecciona una plantilla:</p>
+                </div>
+
+                <div class="templates-grid" id="templatesGrid">
+                    <!-- Templates will be populated by JavaScript -->
+                </div>
+
+                <div class="flex flex-center mt-lg">
+                    <button class="btn btn-primary btn-full" id="continueBtn" disabled onclick="selectTemplate()">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script>
+        // Check authentication
+        Utils.redirectIfNotLoggedIn();
+
+        // Load user data
+        const currentUser = StorageManager.getCurrentUser();
+        if (currentUser) {
+            document.getElementById('headerUserName').textContent = currentUser.name || 'Usuario';
+            if (currentUser.avatar) {
+                document.getElementById('headerAvatar').src = currentUser.avatar;
+            }
+        }
+
+        let selectedTemplateId = null;
+
+        // Populate templates
+        const templates = SimulationManager.getTemplates();
+        const templatesGrid = document.getElementById('templatesGrid');
+
+        templates.forEach(template => {
+            const card = document.createElement('div');
+            card.className = `template-card ${template.color} fade-in`;
+            card.innerHTML = `
+        <div class="template-icon">
+          <i class="${template.icon}"></i>
+        </div>
+        <h3 class="template-title">${template.name}</h3>
+        <p class="template-description">${template.description}</p>
+        <div class="template-check">
+          <i class="fas fa-check"></i>
+        </div>
+      `;
+
+            card.addEventListener('click', function () {
+                // Remove previous selection
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+
+                // Select this template
+                card.classList.add('selected');
+                selectedTemplateId = template.id;
+
+                // Enable continue button
+                document.getElementById('continueBtn').disabled = false;
+            });
+
+            templatesGrid.appendChild(card);
+        });
+
+        function selectTemplate() {
+            if (!selectedTemplateId) {
+                Utils.showToast('Selecciona una plantilla', 'warning');
+                return;
+            }
+
+            // Save selected template to workflow
+            const workflowState = SimulationManager.loadWorkflowState();
+            workflowState.template = selectedTemplateId;
+            SimulationManager.saveWorkflowState(workflowState);
+
+            // Navigate to customize page
+            window.location.href = 'customize.html';
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const nav = document.getElementById('headerNav');
+            nav.classList.toggle('show');
+        }
+
+        // User dropdown toggle
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Logout function
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

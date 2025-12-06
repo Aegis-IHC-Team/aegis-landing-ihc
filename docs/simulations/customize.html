@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalizar Simulación - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo">
+                <img src="../assets/images/logo_grande.png" alt="AEGIS" style="height: 40px; width: auto;">
+            </a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link active">Crear Simulación</a></li>
+                </ul>
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item"><i class="fas fa-user"></i><span>Mi
+                                Perfil</span></a>
+                        <a href="my-simulations.html" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Mis
+                                Resultados</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()"><i
+                                class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="wizard-container">
+            <div class="wizard-card slide-up">
+                <button class="btn-back" onclick="window.location.href='create-template.html'"
+                    style="position: absolute; top: 20px; left: 20px;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="wizard-header">
+                    <h1 class="wizard-title">Personalizar tu simulación</h1>
+                    <p class="wizard-subtitle">Plantilla: <strong id="templateName"></strong></p>
+                </div>
+
+                <form id="customizeForm">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la simulación</label>
+                        <input type="text" class="form-input" id="simName" required
+                            placeholder="Ej: Link Malicioso - Sim">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Dificultad</label>
+                        <div class="difficulty-selector">
+                            <button type="button" class="difficulty-btn" data-difficulty="easy">Fácil</button>
+                            <button type="button" class="difficulty-btn active" data-difficulty="medium">Medio</button>
+                            <button type="button" class="difficulty-btn" data-difficulty="hard">Difícil</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-input" id="description" rows="4"
+                            placeholder="Esta simulación será..."></textarea>
+                    </div>
+
+                    <div class="flex gap-md mt-lg">
+                        <button type="submit" class="btn btn-primary btn-full">Siguiente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        const workflowState = SimulationManager.loadWorkflowState();
+        if (!workflowState.template) {
+            window.location.href = 'create-template.html';
+        }
+
+        const template = SimulationManager.getTemplate(workflowState.template);
+        document.getElementById('templateName').textContent = template.name;
+
+        // Load saved data if exists
+        if (workflowState.name) document.getElementById('simName').value = workflowState.name;
+        if (workflowState.description) document.getElementById('description').value = workflowState.description;
+
+        // Difficulty selector
+        let selectedDifficulty = workflowState.difficulty || 'medium';
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            if (btn.dataset.difficulty === selectedDifficulty) btn.classList.add('active');
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedDifficulty = this.dataset.difficulty;
+            });
+        });
+
+        document.getElementById('customizeForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            workflowState.name = document.getElementById('simName').value.trim();
+            workflowState.difficulty = selectedDifficulty;
+            workflowState.description = document.getElementById('description').value.trim();
+            SimulationManager.saveWorkflowState(workflowState);
+            window.location.href = 'assign-participants.html';
+        });
+
+        function toggleMobileMenu() { document.getElementById('headerNav').classList.toggle('show'); }
+        function toggleUserDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => window.location.href = '../login.html', 500);
+        }
+    </script>
+</body>
+
+</html>

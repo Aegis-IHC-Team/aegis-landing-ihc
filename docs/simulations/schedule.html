@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programar Simulación - AEGIS</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="../assets/styles/dashboard.css">
+    <link rel="stylesheet" href="../assets/styles/simulations.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <a href="../home.html" class="header-logo"><img src="../assets/images/logo_grande.png" alt="AEGIS"
+                    style="height: 40px; width: auto;"></a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            <nav class="header-nav" id="headerNav">
+                <ul class="nav-links">
+                    <li><a href="../home.html" class="nav-link">Inicio</a></li>
+                    <li><a href="my-simulations.html" class="nav-link">Mis Simulaciones</a></li>
+                    <li><a href="create-template.html" class="nav-link active">Crear Simulación</a></li>
+                </ul>
+                <div class="header-user" onclick="toggleUserDropdown()">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="user-avatar"
+                        id="headerAvatar">
+                    <span class="user-name" id="headerUserName">Usuario</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="../profile.html" class="dropdown-item"><i class="fas fa-user"></i><span>Mi
+                                Perfil</span></a>
+                        <a href="my-simulations.html" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Mis
+                                Resultados</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); logout()"><i
+                                class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="wizard-container">
+            <div class="wizard-card slide-up">
+                <button class="btn-back" onclick="window.location.href='assign-participants.html'"
+                    style="position: absolute; top: 20px; left: 20px;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="wizard-header">
+                    <h1 class="wizard-title">Programar Simulación</h1>
+                    <p class="wizard-subtitle">Define las fechas de inicio y finalización</p>
+                </div>
+
+                <form id="scheduleForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-input" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora de Inicio</label>
+                            <input type="time" class="form-input" id="startTime" value="12:00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Finalización</label>
+                            <input type="date" class="form-input" id="endDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora de Finalización</label>
+                            <input type="time" class="form-input" id="endTime" value="12:00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSend">
+                            <span>Envío automático de aviso</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-md mt-lg">
+                        <button type="submit" class="btn btn-primary btn-full">Siguiente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/scripts/storage-manager.js"></script>
+    <script src="../assets/scripts/utilities.js"></script>
+    <script src="../assets/scripts/navigation.js"></script>
+    <script src="../assets/scripts/simulation-manager.js"></script>
+    <script>
+        Utils.redirectIfNotLoggedIn();
+
+        const workflowState = SimulationManager.loadWorkflowState();
+        if (!workflowState.template || !workflowState.name) {
+            window.location.href = 'create-template.html';
+        }
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').min = today;
+        document.getElementById('endDate').min = today;
+
+        // Load saved data
+        if (workflowState.startDate) document.getElementById('startDate').value = workflowState.startDate;
+        if (workflowState.startTime) document.getElementById('startTime').value = workflowState.startTime;
+        if (workflowState.endDate) document.getElementById('endDate').value = workflowState.endDate;
+        if (workflowState.endTime) document.getElementById('endTime').value = workflowState.endTime;
+        if (workflowState.autoSendEmail) document.getElementById('autoSend').checked = true;
+
+        document.getElementById('scheduleForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const startDate = document.getElementById('startDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endDate = document.getElementById('endDate').value;
+            const endTime = document.getElementById('endTime').value;
+
+            // Validate dates
+            const start = new Date(startDate + ' ' + startTime);
+            const end = new Date(endDate + ' ' + endTime);
+
+            if (end <= start) {
+                Utils.showToast('La fecha de finalización debe ser posterior a la de inicio', 'error');
+                return;
+            }
+
+            workflowState.startDate = startDate;
+            workflowState.startTime = startTime;
+            workflowState.endDate = endDate;
+            workflowState.endTime = endTime;
+            workflowState.autoSendEmail = document.getElementById('autoSend').checked;
+
+            SimulationManager.saveWorkflowState(workflowState);
+            window.location.href = 'preview.html';
+        });
+
+        function toggleMobileMenu() { document.getElementById('headerNav').classList.toggle('show'); }
+        function toggleUserDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        function logout() {
+            StorageManager.logout();
+            if (typeof Utils !== 'undefined' && Utils.showToast) {
+                Utils.showToast('Sesión cerrada exitosamente', 'success');
+            }
+            setTimeout(() => window.location.href = '../login.html', 500);
+        }
+    </script>
+</body>
+
+</html>

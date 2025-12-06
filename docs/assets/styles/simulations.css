@@ -1,0 +1,427 @@
+/* ========================================
+    AEGIS - Simulations Pages Styles
+   ======================================== */
+
+/* Template selection grid */
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.template-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.template-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--gradient-button);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-normal);
+}
+
+.template-card:hover {
+    border-color: var(--color-blue);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+}
+
+.template-card:hover::before {
+    transform: scaleX(1);
+}
+
+.template-card.selected {
+    border-color: var(--color-green);
+    background: rgba(27, 196, 103, 0.05);
+}
+
+.template-card.selected::before {
+    transform: scaleX(1);
+    background: var(--color-green);
+}
+
+.template-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.template-card.blue .template-icon {
+    background: rgba(102, 126, 234, 0.15);
+    color: #667EEA;
+}
+
+.template-card.red .template-icon {
+    background: rgba(252, 129, 129, 0.15);
+    color: #FC8181;
+}
+
+.template-card.orange .template-icon {
+    background: rgba(246, 173, 85, 0.15);
+    color: #F6AD55;
+}
+
+.template-card.yellow .template-icon {
+    background: rgba(237, 242, 156, 0.25);
+    color: #EDF29C;
+}
+
+.template-card.green .template-icon {
+    background: rgba(72, 187, 120, 0.15);
+    color: #48BB78;
+}
+
+.template-card.gray .template-icon {
+    background: rgba(113, 128, 150, 0.15);
+    color: #718096;
+}
+
+.template-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-midnight);
+    margin-bottom: 8px;
+}
+
+.template-description {
+    font-size: 0.9rem;
+    color: #757575;
+    line-height: 1.4;
+}
+
+.template-check {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    background: var(--color-green);
+    color: var(--color-white);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.template-card.selected .template-check {
+    display: flex;
+}
+
+/* Form Wizard */
+.wizard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.wizard-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.wizard-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.wizard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-midnight);
+    margin-bottom: var(--spacing-xs);
+}
+
+.wizard-subtitle {
+    color: #757575;
+    font-size: 1rem;
+}
+
+/* Simulation cards grid */
+.simulations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.simulation-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.simulation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+}
+
+.simulation-card.blue::before {
+    background: #667EEA;
+}
+
+.simulation-card.red::before {
+    background: #FC8181;
+}
+
+.simulation-card.green::before {
+    background: #48BB78;
+}
+
+.simulation-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.simulation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+}
+
+.simulation-info {
+    flex: 1;
+}
+
+.simulation-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-midnight);
+    margin-bottom: 4px;
+}
+
+.simulation-template {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.simulation-play-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-full);
+    background: var(--gradient-button);
+    color: var(--color-white);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.simulation-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(27, 196, 103, 0.4);
+}
+
+.simulation-progress {
+    margin-top: var(--spacing-sm);
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #757575;
+}
+
+.progress-label strong {
+    color: var(--color-midnight);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #E0E0E0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--gradient-button);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Preview card */
+.preview-card {
+    background: rgba(35, 113, 215, 0.05);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.preview-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.preview-row:last-child {
+    border-bottom: none;
+}
+
+.preview-label {
+    font-weight: 600;
+    color: var(--color-midnight);
+}
+
+.preview-value {
+    color: #757575;
+    text-align: right;
+}
+
+/* Participant badge */
+.participant-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(35, 113, 215, 0.1);
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 0.9rem;
+    color: var(--color-midnight);
+}
+
+.participant-badge .remove-btn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    line-height: 1;
+}
+
+.participant-badge .remove-btn:hover {
+    color: #E53935;
+}
+
+/* Difficulty selector */
+.difficulty-selector {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.difficulty-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #E0E0E0;
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.difficulty-btn:hover {
+    border-color: var(--color-blue);
+}
+
+.difficulty-btn.active {
+    border-color: var(--color-green);
+    background: rgba(27, 196, 103, 0.1);
+    color: var(--color-green);
+}
+
+/* Statistics display */
+.stats-display {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-box {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-circle {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto var(--spacing-sm);
+    border-radius: var(--radius-full);
+    background: conic-gradient(var(--color-green) 0% var(--progress, 0%), #E0E0E0 var(--progress, 0%) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.stat-circle::before {
+    content: '';
+    width: 90px;
+    height: 90px;
+    background: var(--color-white);
+    border-radius: var(--radius-full);
+    position: absolute;
+}
+
+.stat-circle-value {
+    position: relative;
+    z-index: 1;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-midnight);
+}
+
+.stat-box-label {
+    font-size: 0.9rem;
+    color: #757575;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .templates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .simulations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-display {
+        grid-template-columns: 1fr;
+    }
+}
